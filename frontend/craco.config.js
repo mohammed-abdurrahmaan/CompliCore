@@ -55,6 +55,16 @@ let webpackConfig = {
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
       }
+
+      // Strip fork-ts-checker-webpack-plugin — this project is plain JS (no .ts files),
+      // and the version shipped by react-scripts 5 has a broken nested ajv-keywords@3
+      // that crashes on newer Node versions. We don't need TS type-checking anyway.
+      if (Array.isArray(webpackConfig.plugins)) {
+        webpackConfig.plugins = webpackConfig.plugins.filter(
+          (plugin) => plugin?.constructor?.name !== 'ForkTsCheckerWebpackPlugin'
+        );
+      }
+
       return webpackConfig;
     },
   },
