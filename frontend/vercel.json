@@ -1,6 +1,6 @@
 {
   "buildCommand": "node node_modules/@craco/craco/dist/bin/craco.js build",
   "outputDirectory": "build",
-  "installCommand": "npm install",
+  "installCommand": "npm install --legacy-peer-deps",
   "framework": "create-react-app"
 }
