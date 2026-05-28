@@ -58,8 +58,7 @@
   },
   "overrides": {
     "ajv": "^8.12.0",
-    "ajv-keywords": "^5.1.0",
-    "schema-utils": "^4.2.0"
+    "ajv-keywords": "^5.1.0"
   },
   "scripts": {
     "start": "craco start",
