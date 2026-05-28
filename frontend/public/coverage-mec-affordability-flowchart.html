@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompliCore - Coverage Offering, MEC, MV & Affordability Flowchart</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --primary: #1e40af; --success: #059669; --error: #dc2626;
+      --warning: #d97706; --accent-bg: #eff6ff; --purple: #7c3aed; --purple-bg: #ede9fe;
+      --teal: #0d9488; --teal-bg: #ccfbf1;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .header .badge { display: inline-block; background: var(--accent-bg); color: var(--primary); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
+    .header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .header p { color: var(--muted); font-size: 15px; max-width: 750px; margin: 0 auto; }
+    .meta-row { display: flex; justify-content: center; gap: 24px; margin-top: 16px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+    .meta-row strong { color: var(--text); }
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin-bottom: 24px; }
+    .section h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .section h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--primary); color: #fff; font-size: 13px; font-weight: 700; border-radius: 8px; flex-shrink: 0; }
+    .section .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .mermaid-wrap { background: #fafbfc; border: 1px solid var(--border); border-radius: 8px; padding: 24px 16px; overflow-x: auto; margin-bottom: 20px; }
+    .mermaid { display: flex; justify-content: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .note-box { background: var(--accent-bg); border-left: 3px solid var(--primary); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .note-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .warn-box { background: #fffbeb; border-left: 3px solid var(--warning); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .warn-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--warning); }
+    .gap-box { background: #fef2f2; border-left: 3px solid var(--error); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .gap-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--error); }
+    .success-box { background: #ecfdf5; border-left: 3px solid var(--success); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .success-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); }
+    .purple-box { background: var(--purple-bg); border-left: 3px solid var(--purple); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .purple-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); }
+    .teal-box { background: var(--teal-bg); border-left: 3px solid var(--teal); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .teal-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--teal); }
+    table.ref { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+    table.ref th { background: #f1f5f9; text-align: left; padding: 10px 14px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border); }
+    table.ref td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table.ref tr:last-child td { border-bottom: none; }
+    h3.sub { font-size: 15px; margin-top: 24px; margin-bottom: 8px; font-weight: 700; }
+    .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 24px; }
+    .toc h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+    .toc ol { padding-left: 20px; }
+    .toc li { font-size: 13px; padding: 3px 0; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .callout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+    .callout-card { padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+    .callout-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .callout-card p { font-size: 12px; color: var(--muted); }
+    .callout-card .big { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .how-to { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 12px; }
+    .how-to h5 { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .how-to ol { padding-left: 18px; font-size: 13px; }
+    .how-to ol li { padding: 4px 0; }
+    .scenario-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+    .scenario-box h5 { font-size: 12px; font-weight: 700; color: #92400e; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .scenario-box p { font-size: 13px; color: #78350f; margin-bottom: 4px; }
+    .check-list { list-style: none; padding: 0; margin-top: 12px; }
+    .check-list li { padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: 13px; display: flex; align-items: flex-start; gap: 10px; }
+    .check-list .num-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; border-radius: 6px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .check-list .pass { background: #ecfdf5; border-color: #a7f3d0; }
+    .check-list .pass .num-badge { background: #059669; color: #fff; }
+    .decision-table td.yes { background: #ecfdf5; color: #065f46; font-weight: 600; }
+    .decision-table td.no { background: #fef2f2; color: #991b1b; font-weight: 600; }
+    @media print { body { background: #fff; } .container { padding: 20px; } .section { break-inside: avoid; border: 1px solid #ddd; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="badge">Detailed User Journey Flowchart</div>
+      <h1>Coverage Offering, TRICARE/Veterans, MEC, Minimum Value &amp; Affordability</h1>
+      <p>A comprehensive guide for an ALE to offer coverage to 95%+ of FTEs, handle TRICARE veterans, validate MEC qualification, test Minimum Value, and prove affordability &mdash; with clear separation of each compliance standard.</p>
+      <div class="meta-row">
+        <span><strong>Coverage:</strong> 95% of FT Employees</span>
+        <span><strong>MEC:</strong> Low Bar (Basic Coverage)</span>
+        <span><strong>MV:</strong> 60% Actuarial Value</span>
+        <span><strong>Affordability:</strong> 9.02% of Income</span>
+        <span><strong>EHBs:</strong> Not Required for Large Employers</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <h3>Table of Contents</h3>
+      <ol>
+        <li><a href="#s1">Master Flowchart: End-to-End Compliance Process</a></li>
+        <li><a href="#s2">Step 1: Build the Full-Time Employee Roster (Including TRICARE/Veterans)</a></li>
+        <li><a href="#s3">Step 2: The 95% Coverage Offer Rule</a></li>
+        <li><a href="#s4">Step 3: TRICARE/Veterans &mdash; Why They Must Be Offered</a></li>
+        <li><a href="#s5">Understanding the 3 Standards: MEC vs Minimum Value vs EHBs</a></li>
+        <li><a href="#s6">Step 4: How to Check MEC &mdash; What Qualifies (The Low Bar)</a></li>
+        <li><a href="#s7">Step 5: How to Check Minimum Value &mdash; The Higher Standard</a></li>
+        <li><a href="#s8">Step 6: Affordability Testing &mdash; Safe Harbors, Fields &amp; How to Test</a></li>
+        <li><a href="#s9">Affordability Worked Examples (Real Numbers)</a></li>
+        <li><a href="#s10">Putting It All Together &mdash; Final Compliance Decision</a></li>
+        <li><a href="#s11">Penalty Calculation &mdash; Which Failure Triggers Which Penalty</a></li>
+        <li><a href="#s12">Edge Cases, Error Scenarios &amp; FAQ</a></li>
+        <li><a href="#s13">Complete Reference: Every Number &amp; Threshold</a></li>
+      </ol>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1. MASTER FLOWCHART -->
+    <!-- ============================================================ -->
+    <div class="section" id="s1">
+      <h2><span class="num">1</span> Master Flowchart: End-to-End Compliance Process</h2>
+      <p class="subtitle">The complete journey showing MEC, Minimum Value, and Affordability as three separate compliance gates</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    ALE["Employer confirmed<br/>as ALE (50+ FTE)"] --> ROSTER["STEP 1: Build Full-Time<br/>Employee Roster<br/>(include TRICARE veterans)"]
+
+    ROSTER --> CALC95["STEP 2: Calculate 95%<br/>threshold. Offer coverage<br/>to 95%+ of FT employees."]
+
+    CALC95 --> CHECK95{Offered to<br/>95%+ of FT?}
+
+    CHECK95 -->|"NO"| FAIL_A["4980H(a) PENALTY<br/>(FT - 30) x $2,900/yr"]
+    CHECK95 -->|"YES"| GATE_MEC["STEP 4: MEC Check<br/>Does the offered plan<br/>qualify as MEC?"]
+
+    GATE_MEC --> MEC_Q{Plan qualifies<br/>as MEC?}
+
+    MEC_Q -->|"NO"| FAIL_A2["4980H(a) PENALTY<br/>Offering a plan that<br/>is NOT MEC = same<br/>as not offering at all"]
+    MEC_Q -->|"YES (low bar)"| GATE_MV["STEP 5: Minimum Value<br/>Does the plan provide<br/>at least 60% actuarial<br/>value with substantial<br/>hospital/physician coverage?"]
+
+    GATE_MV --> MV_Q{Plan meets<br/>Minimum Value?}
+
+    MV_Q -->|"NO"| RISK_B1["4980H(b) RISK<br/>Plan lacks MV.<br/>If employee gets<br/>marketplace subsidy<br/>= $4,350/yr penalty"]
+    MV_Q -->|"YES"| GATE_AFFORD["STEP 6: Affordability<br/>Is the employee's<br/>premium affordable?<br/>(3 safe harbor tests)"]
+
+    GATE_AFFORD --> AFF_Q{Affordable?<br/>1+ safe harbor<br/>passes?}
+
+    AFF_Q -->|"NO"| RISK_B2["4980H(b) RISK<br/>Plan is unaffordable.<br/>If employee gets<br/>marketplace subsidy<br/>= $4,350/yr penalty"]
+    AFF_Q -->|"YES"| COMPLIANT["FULLY COMPLIANT<br/>95%+ offered MEC<br/>Plan meets MV (60%+)<br/>Coverage is affordable<br/>No penalty exposure"]
+
+    COMPLIANT --> NEXT["NEXT STEPS:<br/>IRS Form 1094-C / 1095-C<br/>Annual compliance report"]
+
+    style ALE fill:#d97706,color:#fff,stroke:none
+    style FAIL_A fill:#dc2626,color:#fff,stroke:none
+    style FAIL_A2 fill:#dc2626,color:#fff,stroke:none
+    style RISK_B1 fill:#dc2626,color:#fff,stroke:none
+    style RISK_B2 fill:#dc2626,color:#fff,stroke:none
+    style COMPLIANT fill:#059669,color:#fff,stroke:none
+    style GATE_MEC fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style GATE_MV fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style GATE_AFFORD fill:#fefce8,color:#78350f,stroke:#fde68a
+    style NEXT fill:#f1f5f9,color:#475569,stroke:#e2e8f0
+        </div>
+      </div>
+
+      <div class="note-box">
+        <strong>Three Separate Compliance Gates:</strong><br/>
+        <strong style="color:var(--primary);">Blue = MEC (low bar)</strong> &mdash; Is this a real health plan?<br/>
+        <strong style="color:var(--teal);">Teal = Minimum Value (higher bar)</strong> &mdash; Does it cover at least 60% of costs with hospital/physician?<br/>
+        <strong style="color:#92400e;">Yellow = Affordability</strong> &mdash; Can the employee afford the premium?<br/>
+        Each gate is a separate test. A plan can pass MEC but fail MV. It can pass MV but fail affordability. Each failure has different penalty consequences.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. BUILD THE ROSTER -->
+    <!-- ============================================================ -->
+    <div class="section" id="s2">
+      <h2><span class="num">2</span> Step 1: Build the Full-Time Employee Roster (Including TRICARE/Veterans)</h2>
+      <p class="subtitle">The foundation: a complete list of every full-time employee, including TRICARE-covered veterans</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START["All employees in<br/>the employer's workforce"] --> HOURS{Employee works<br/>130+ hours/month?}
+
+    HOURS -->|"YES"| FT["FULL-TIME<br/>Include in roster"]
+    HOURS -->|"NO"| PT["PART-TIME<br/>Not required to offer"]
+
+    FT --> CAT["Full-time categories:"]
+    CAT --> REG["Regular FT employees"]
+    CAT --> TRI["TRICARE/Veteran FTEs<br/>(have government coverage<br/>but STILL count in roster)"]
+    CAT --> SEA["Seasonal FT workers"]
+    CAT --> VAR["Variable-hour employees<br/>(classified FT after<br/>measurement period)"]
+
+    REG --> TOTAL["Total Full-Time<br/>Headcount = N"]
+    TRI --> TOTAL
+    SEA --> TOTAL
+    VAR --> TOTAL
+
+    style FT fill:#d97706,color:#fff,stroke:none
+    style PT fill:#3b82f6,color:#fff,stroke:none
+    style TRI fill:#7c3aed,color:#fff,stroke:none
+    style TOTAL fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <strong>TRICARE Veterans Are INCLUDED Here:</strong> They were excluded for the ALE determination (50-FTE threshold), but they MUST be included in the coverage offering roster. They count in both the numerator (if offered) and denominator (total FT).
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. THE 95% RULE -->
+    <!-- ============================================================ -->
+    <div class="section" id="s3">
+      <h2><span class="num">3</span> Step 2: The 95% Coverage Offer Rule</h2>
+      <p class="subtitle">Calculate whether you've offered coverage to enough full-time employees</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    TOTAL["Total FT = N<br/>(includes TRICARE FTEs)"] --> FORMULA["95% Threshold:<br/>N x 0.95 = minimum offers<br/>(round DOWN)"]
+
+    FORMULA --> OFFER["Count employees<br/>who received an OFFER<br/>(not enrollments &mdash;<br/>declinations are fine)"]
+
+    OFFER --> CHECK{Offers / N<br/>>= 95%?}
+
+    CHECK -->|"YES"| PASS["PASS<br/>Proceed to MEC check"]
+    CHECK -->|"NO"| GAP["FAIL: Gap identified<br/>Need X more offers<br/>to reach 95%"]
+
+    GAP --> FIX["Extend offer to<br/>more FT employees<br/>(including TRICARE vets)"]
+    FIX -.-> OFFER
+
+    style PASS fill:#059669,color:#fff,stroke:none
+    style GAP fill:#dc2626,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <h5>Example: 62 FT employees (including 4 TRICARE veterans)</h5>
+        <p><strong>Threshold:</strong> 62 x 0.95 = 58.9 &rarr; round down = <strong>58 offers needed</strong></p>
+        <p><strong>Employer offers to all 62</strong> (including vets). 4 vets decline, 3 others decline = 55 enrolled.</p>
+        <p><strong>Result:</strong> 62 offered / 62 total = 100% &ge; 95% &rarr; <strong>PASSES</strong>. Enrollment doesn't matter &mdash; only the offer.</p>
+      </div>
+
+      <div class="gap-box">
+        <strong>What if they skip the 4 veterans?</strong> 58 / 62 = 93.5% &lt; 95% &rarr; FAILS. Penalty: (62 - 30) x $2,900 = <strong>$92,800/year</strong>.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 4. TRICARE/VETERANS -->
+    <!-- ============================================================ -->
+    <div class="section" id="s4">
+      <h2><span class="num">4</span> Step 3: TRICARE/Veterans &mdash; Why They Must Be Offered</h2>
+      <p class="subtitle">How TRICARE-covered veterans fit into every compliance test</p>
+
+      <table class="ref">
+        <thead><tr><th>Compliance Context</th><th>TRICARE Veterans Counted?</th><th>Why?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ALE Determination (50-FTE threshold)</strong></td><td style="color:#dc2626; font-weight:700;">EXCLUDED</td><td>They have government coverage; don't contribute to employer obligation threshold</td></tr>
+          <tr><td><strong>95% Coverage Offer (denominator)</strong></td><td style="color:#059669; font-weight:700;">INCLUDED</td><td>All FT employees count in the total, regardless of external coverage</td></tr>
+          <tr><td><strong>95% Coverage Offer (numerator)</strong></td><td style="color:#059669; font-weight:700;">SHOULD be offered</td><td>Offer counts toward 95% even when veteran declines</td></tr>
+          <tr><td><strong>MEC Check</strong></td><td style="color:#64748b;">N/A (plan-level)</td><td>MEC is about the plan's structure, not who enrolls</td></tr>
+          <tr><td><strong>Minimum Value Check</strong></td><td style="color:#64748b;">N/A (plan-level)</td><td>MV is about actuarial value, not individual employees</td></tr>
+          <tr><td><strong>Affordability Test</strong></td><td style="color:#059669; font-weight:700;">INCLUDED</td><td>The offered plan must be affordable for them even if they decline</td></tr>
+          <tr><td><strong>IRS Form 1095-C</strong></td><td style="color:#059669; font-weight:700;">MUST receive</td><td>Every FT employee gets a 1095-C, regardless of coverage source</td></tr>
+        </tbody>
+      </table>
+
+      <div class="purple-box">
+        <strong>Bottom Line:</strong> Always offer coverage to TRICARE veterans. They will almost certainly decline. Their declination doesn't hurt your 95%. NOT offering hurts your 95%. The offer costs nothing; skipping it can cost $2,900 per employee.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 5. MEC vs MV vs EHB -->
+    <!-- ============================================================ -->
+    <div class="section" id="s5">
+      <h2><span class="num">5</span> Understanding the 3 Standards: MEC vs Minimum Value vs EHBs</h2>
+      <p class="subtitle">These three terms are often confused. They are different standards with different requirements and different consequences.</p>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    PLAN["Employer's<br/>Health Plan"] --> MEC_TEST["TEST 1: MEC<br/>Minimum Essential Coverage<br/>(LOW BAR)"]
+    PLAN --> MV_TEST["TEST 2: Minimum Value<br/>(HIGHER BAR)"]
+    PLAN --> EHB_TEST["TEST 3: EHBs<br/>Essential Health Benefits<br/>(NOT required for large employers)"]
+
+    MEC_TEST --> MEC_DEF["Is it a real group health plan<br/>that covers basic services?<br/>Does it include preventive care?<br/>Does it extend to dependents to 26?"]
+    MEC_DEF --> MEC_BAR["BAR: Very low.<br/>Almost all employer plans<br/>qualify automatically.<br/>Even skinny plans pass."]
+
+    MV_TEST --> MV_DEF["Does it cover 60% or more<br/>of total allowed costs?<br/>Does it include substantial<br/>hospital and physician services?"]
+    MV_DEF --> MV_BAR["BAR: Moderate.<br/>Skinny plans that only<br/>cover preventive care FAIL.<br/>Standard employer plans pass."]
+
+    EHB_TEST --> EHB_DEF["Does it cover all 10<br/>ACA categories?<br/>(ambulatory, emergency,<br/>hospital, maternity, etc.)"]
+    EHB_DEF --> EHB_BAR["BAR: High.<br/>Required ONLY for individual<br/>and small-group market plans.<br/>Large employer plans ALEs<br/>are EXEMPT from this."]
+
+    MEC_BAR --> PENALTY_A["Failing MEC:<br/>4980H a penalty<br/>(FT - 30) x $2,900"]
+    MV_BAR --> PENALTY_B["Failing MV:<br/>4980H b penalty<br/>$4,350 per affected employee"]
+    EHB_BAR --> NO_PENALTY["No employer penalty<br/>for missing EHBs<br/>(not required for ALEs)"]
+
+    style MEC_TEST fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style MV_TEST fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style EHB_TEST fill:#f1f5f9,color:#475569,stroke:#e2e8f0
+    style MEC_BAR fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style MV_BAR fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style EHB_BAR fill:#f1f5f9,color:#475569,stroke:#e2e8f0
+    style PENALTY_A fill:#dc2626,color:#fff,stroke:none
+    style PENALTY_B fill:#dc2626,color:#fff,stroke:none
+    style NO_PENALTY fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <h3 class="sub">Side-by-Side Comparison</h3>
+      <table class="ref">
+        <thead><tr><th>Standard</th><th>What It Means</th><th>Bar Height</th><th>Required for ALEs?</th><th>Penalty If Failed</th><th>Legal Source</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>MEC<br/>(Minimum Essential Coverage)</strong></td>
+            <td>The plan is a <em>real</em> health plan &mdash; not just a discount card, wellness program, or standalone FSA. It provides at least basic health coverage including preventive care.</td>
+            <td style="color:#059669; font-weight:700;">LOW</td>
+            <td style="color:#059669; font-weight:700;">Yes &mdash; must offer MEC to 95%+ of FT employees</td>
+            <td><strong>4980H(a)</strong>: (FT - 30) x $2,900/yr if not offered</td>
+            <td>IRC &sect; 5000A(f)<br/>IRC &sect; 4980H(a)</td>
+          </tr>
+          <tr>
+            <td><strong>Minimum Value (MV)</strong></td>
+            <td>The plan covers at least <strong>60%</strong> of total allowed costs (actuarial value) and includes <strong>substantial</strong> coverage for inpatient hospital and physician services.</td>
+            <td style="color:#d97706; font-weight:700;">MODERATE</td>
+            <td style="color:#059669; font-weight:700;">Yes &mdash; to avoid 4980H(b) penalties</td>
+            <td><strong>4980H(b)</strong>: $4,350/yr per employee who gets a marketplace subsidy</td>
+            <td>IRC &sect; 36B(c)(2)(C)(ii)<br/>45 CFR &sect; 156.145</td>
+          </tr>
+          <tr>
+            <td><strong>Essential Health Benefits (10 EHBs)</strong></td>
+            <td>Plan covers all 10 ACA-mandated benefit categories (ambulatory, emergency, hospital, maternity, mental health, Rx, rehab, lab, preventive, pediatric).</td>
+            <td style="color:#dc2626; font-weight:700;">HIGH</td>
+            <td style="color:#dc2626; font-weight:700;">NO &mdash; large employer plans are exempt</td>
+            <td>No employer penalty for missing EHBs</td>
+            <td>ACA &sect; 1302(b)<br/>42 U.S.C. &sect; 18022(b)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="gap-box">
+        <strong>Critical Correction &mdash; EHBs Are NOT Required for MEC:</strong><br/>
+        A common misconception is that employer plans must cover all 10 Essential Health Benefits to qualify as MEC. This is <strong>wrong</strong>. The 10 EHBs are mandated for <strong>individual and small-group marketplace plans only</strong>. Large employer (ALE) plans are <strong>exempt</strong> from the EHB requirement. An ALE's plan qualifies as MEC simply by being a legitimate group health plan that covers basic services including preventive care. Many corporate MEC plans prioritize preventive and wellness coverage without necessarily providing "substantial" hospital-level protection &mdash; and they still qualify as MEC.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 6. HOW TO CHECK MEC -->
+    <!-- ============================================================ -->
+    <div class="section" id="s6">
+      <h2><span class="num">6</span> Step 4: How to Check MEC &mdash; What Qualifies (The Low Bar)</h2>
+      <p class="subtitle">MEC is a structural test: is this a real health plan? The bar is intentionally low. Most employer-sponsored plans pass automatically.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    PLAN["Employer health<br/>plan to validate"] --> Q1{Is it a group<br/>health plan?}
+
+    Q1 -->|"NO"| F1["NOT MEC<br/>Discount programs, health<br/>FSAs, and wellness-only<br/>plans do NOT qualify"]
+    Q1 -->|"YES"| Q2{Does it cover<br/>preventive care<br/>services?}
+
+    Q2 -->|"NO"| F2["NOT MEC<br/>A plan that excludes all<br/>preventive care does not<br/>meet the basic requirement"]
+    Q2 -->|"YES"| Q3{Does it extend<br/>coverage to<br/>dependents up<br/>to age 26?}
+
+    Q3 -->|"NO"| F3["COMPLIANCE ISSUE<br/>ACA requires dependent<br/>coverage to age 26.<br/>Fix this to qualify."]
+    Q3 -->|"YES"| Q4{Does it provide<br/>more than just<br/>excepted benefits?}
+
+    Q4 -->|"NO"| F4["NOT MEC<br/>Standalone dental, vision,<br/>or FSA-only plans are<br/>excepted benefits"]
+    Q4 -->|"YES"| PASS["QUALIFIES AS MEC<br/>This plan meets the<br/>Minimum Essential Coverage<br/>definition"]
+
+    PASS --> IMPORTANT["IMPORTANT:<br/>MEC does NOT mean the plan<br/>is generous or comprehensive.<br/>It just means it is a real<br/>health plan. Now test<br/>Minimum Value separately."]
+
+    style F1 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style F2 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style F3 fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style F4 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style PASS fill:#059669,color:#fff,stroke:none
+    style IMPORTANT fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+        </div>
+      </div>
+
+      <h3 class="sub">The MEC Qualification Criteria</h3>
+      <ul class="check-list">
+        <li class="pass">
+          <span class="num-badge">1</span>
+          <div>
+            <strong>It's a Group Health Plan</strong><br/>
+            The plan must be an employer-sponsored group health plan &mdash; not a discount program, health sharing ministry, or informal arrangement. It must be a formal plan that provides health coverage to employees.<br/><br/>
+            <strong>Legal basis:</strong> IRC &sect; 5000A(f)(2) defines "eligible employer-sponsored plan" as a group health plan offered by an employer to the employee.
+          </div>
+        </li>
+        <li class="pass">
+          <span class="num-badge">2</span>
+          <div>
+            <strong>Covers Preventive Care Services</strong><br/>
+            The plan must cover recommended preventive services. Under ACA Section 2713, non-grandfathered plans must cover USPSTF A/B-rated preventive services, ACIP-recommended immunizations, and HRSA preventive care guidelines with <strong>no cost sharing</strong> for in-network services.<br/><br/>
+            <strong>What this includes:</strong> Annual physicals, immunizations, cancer screenings (mammograms, colonoscopies), well-child visits, contraceptive coverage, blood pressure/cholesterol screenings, and other evidence-based preventive services.<br/><br/>
+            <strong>Legal basis:</strong> ACA Section 2713 (PHS Act &sect; 2713), 42 U.S.C. &sect; 300gg-13.
+          </div>
+        </li>
+        <li class="pass">
+          <span class="num-badge">3</span>
+          <div>
+            <strong>Dependent Coverage to Age 26</strong><br/>
+            The plan must allow employees to extend coverage to their children up to age 26, regardless of the child's marital status, student status, financial dependency, or whether they live with the employee.<br/><br/>
+            <strong>Legal basis:</strong> ACA Section 2714 (PHS Act &sect; 2714), 42 U.S.C. &sect; 300gg-14.
+          </div>
+        </li>
+        <li class="pass">
+          <span class="num-badge">4</span>
+          <div>
+            <strong>Not Just "Excepted Benefits"</strong><br/>
+            The plan must provide actual health coverage &mdash; not just standalone dental, standalone vision, a health FSA, an EAP (Employee Assistance Program), or a wellness program. These are "excepted benefits" under HIPAA/ACA and do NOT count as MEC by themselves.<br/><br/>
+            <strong>Legal basis:</strong> PHS Act &sect; 2791(c), 42 U.S.C. &sect; 300gg-91(c). Excepted benefits are carved out from MEC.
+          </div>
+        </li>
+      </ul>
+
+      <h3 class="sub">What DOES and DOES NOT Qualify as MEC</h3>
+      <table class="ref">
+        <thead><tr><th>Plan Type</th><th>Qualifies as MEC?</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Standard employer PPO/HMO plan</strong></td><td style="color:#059669; font-weight:700;">YES</td><td>Covers medical, preventive, hospital, Rx, etc. Easily qualifies.</td></tr>
+          <tr><td><strong>High-Deductible Health Plan (HDHP)</strong></td><td style="color:#059669; font-weight:700;">YES</td><td>Still a group health plan even with high deductible. Qualifies as MEC.</td></tr>
+          <tr><td><strong>"Skinny" MEC plan (preventive only)</strong></td><td style="color:#059669; font-weight:700;">YES</td><td>Covers preventive care and basic services. Qualifies as MEC. But likely fails Minimum Value (no hospital/physician).</td></tr>
+          <tr><td><strong>Self-insured employer plan</strong></td><td style="color:#059669; font-weight:700;">YES</td><td>Self-funded plans are group health plans and qualify as MEC.</td></tr>
+          <tr><td><strong>Grandfathered employer plan</strong></td><td style="color:#059669; font-weight:700;">YES</td><td>Grandfathered plans qualify as MEC even if they don't meet all current ACA standards.</td></tr>
+          <tr><td><strong>Standalone dental/vision plan</strong></td><td style="color:#dc2626; font-weight:700;">NO</td><td>These are "excepted benefits" and don't count as MEC.</td></tr>
+          <tr><td><strong>Health FSA (Flexible Spending Account)</strong></td><td style="color:#dc2626; font-weight:700;">NO</td><td>FSAs are excepted benefits. Cannot be the sole health coverage.</td></tr>
+          <tr><td><strong>Wellness program only</strong></td><td style="color:#dc2626; font-weight:700;">NO</td><td>Gym memberships, health coaching, etc. are not a health plan.</td></tr>
+          <tr><td><strong>Health discount card</strong></td><td style="color:#dc2626; font-weight:700;">NO</td><td>Discount programs are not insurance and don't qualify as MEC.</td></tr>
+          <tr><td><strong>TRICARE (for veterans)</strong></td><td style="color:#059669; font-weight:700;">YES (separately)</td><td>TRICARE qualifies as MEC under IRC &sect; 5000A(f)(1)(C). But the employer still needs to offer their own plan.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="teal-box">
+        <strong>MEC is a Low Bar By Design:</strong><br/>
+        The purpose of MEC is simply to confirm the employer is offering a <em>real health plan</em> &mdash; not nothing, and not a sham product. Almost every legitimate employer-sponsored group health plan qualifies. The <strong>quality</strong> of the plan is measured by Minimum Value (next step), not MEC. Think of MEC as the "existence check" and MV as the "quality check."
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 7. MINIMUM VALUE -->
+    <!-- ============================================================ -->
+    <div class="section" id="s7">
+      <h2><span class="num">7</span> Step 5: How to Check Minimum Value &mdash; The Higher Standard</h2>
+      <p class="subtitle">Minimum Value (MV) is the quality test: does the plan cover enough costs? This is where "skinny" MEC plans fail.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    PLAN["Plan passed MEC check.<br/>Now test Minimum Value."] --> TWO["MV has TWO requirements.<br/>Both must be met."]
+
+    TWO --> REQ1["REQUIREMENT 1:<br/>Actuarial Value &ge; 60%<br/>The plan must cover at least<br/>60% of total allowed costs<br/>for a standard population"]
+    TWO --> REQ2["REQUIREMENT 2:<br/>Substantial Hospital &amp;<br/>Physician Coverage<br/>The plan must include<br/>meaningful coverage for<br/>inpatient &amp; outpatient services"]
+
+    REQ1 --> HOW_AV["How to calculate AV:<br/>Use the HHS MV Calculator<br/>(Excel tool from CMS)<br/>OR get an actuarial<br/>certification"]
+
+    HOW_AV --> AV_INPUTS["Calculator inputs:<br/>- Deductible individual/family<br/>- Coinsurance rate<br/>- Copays doctor, specialist, ER<br/>- OOP maximum<br/>- HSA/HRA employer contributions"]
+
+    AV_INPUTS --> AV_RESULT{AV at least 60%?}
+    AV_RESULT -->|"NO"| AV_FAIL["FAILS MV<br/>Plan does not cover<br/>enough costs"]
+    AV_RESULT -->|"YES"| CHECK_HOSP["Check hospital/<br/>physician coverage"]
+
+    REQ2 --> CHECK_HOSP
+    CHECK_HOSP --> HOSP_Q{Plan covers<br/>inpatient hospital<br/>AND physician<br/>services?}
+
+    HOSP_Q -->|"NO"| HOSP_FAIL["FAILS MV<br/>Skinny plans that<br/>only cover preventive<br/>care fail here"]
+    HOSP_Q -->|"YES"| MV_PASS["PASSES MINIMUM VALUE<br/>Plan covers 60%+ of costs<br/>with hospital/physician<br/>coverage included"]
+
+    MV_PASS --> AFFORD["Proceed to<br/>Affordability Testing"]
+
+    style AV_FAIL fill:#dc2626,color:#fff,stroke:none
+    style HOSP_FAIL fill:#dc2626,color:#fff,stroke:none
+    style MV_PASS fill:#059669,color:#fff,stroke:none
+    style AFFORD fill:#fefce8,color:#78350f,stroke:#fde68a
+    style AV_INPUTS fill:#f1f5f9,color:#475569,stroke:#e2e8f0
+        </div>
+      </div>
+
+      <h3 class="sub">Minimum Value: The Two Requirements</h3>
+      <table class="ref">
+        <thead><tr><th>Requirement</th><th>What It Means</th><th>How to Test</th><th>Legal Source</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Actuarial Value &ge; 60%</strong></td>
+            <td>When you model the plan against a standard population, the plan pays at least 60% of total medical costs. The employee pays the other 40% or less through deductibles, copays, and coinsurance.</td>
+            <td>Use the <strong>HHS MV Calculator</strong> (an Excel spreadsheet published by CMS). Enter plan design details (deductibles, copays, coinsurance, OOP max). The calculator outputs the actuarial value percentage. Alternatively, get a <strong>certified actuary</strong> to calculate it.</td>
+            <td>IRC &sect; 36B(c)(2)(C)(ii)<br/>45 CFR &sect; 156.145<br/>ACA &sect; 1302(d)(2)</td>
+          </tr>
+          <tr>
+            <td><strong>2. Substantial Hospital &amp; Physician Coverage</strong></td>
+            <td>The plan must include meaningful coverage for <strong>inpatient hospital services</strong> and <strong>physician/outpatient services</strong>. Plans that exclude these (e.g., preventive-only "skinny" plans) fail MV even if their AV might technically compute above 60%.</td>
+            <td>Check the plan's SBC. Look for "Hospital stay (facility fee)" and "Doctor visit (primary/specialist)" rows. They must show actual coverage (copay, coinsurance, etc.) &mdash; not "Not Covered."</td>
+            <td>IRS Notice 2012-31<br/>Proposed Reg. &sect; 1.36B-6<br/>ACA &sect; 1302(b)(1)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Data Fields Needed for MV Calculation</h3>
+      <table class="ref">
+        <thead><tr><th>Field</th><th>Source</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Individual Deductible</strong></td><td>SBC page 1, "Deductible" &rarr; Individual</td><td>$2,000</td></tr>
+          <tr><td><strong>Family Deductible</strong></td><td>SBC page 1, "Deductible" &rarr; Family</td><td>$4,000</td></tr>
+          <tr><td><strong>Coinsurance Rate</strong></td><td>SBC, typical coinsurance after deductible</td><td>20% (employee pays 20%, plan pays 80%)</td></tr>
+          <tr><td><strong>Primary Care Copay</strong></td><td>SBC, "Primary care visit" row</td><td>$25/visit</td></tr>
+          <tr><td><strong>Specialist Copay</strong></td><td>SBC, "Specialist visit" row</td><td>$50/visit</td></tr>
+          <tr><td><strong>Emergency Room Copay</strong></td><td>SBC, "Emergency room" row</td><td>$250/visit</td></tr>
+          <tr><td><strong>Individual OOP Maximum</strong></td><td>SBC page 1, "Out-of-Pocket Limit" &rarr; Individual</td><td>$7,500</td></tr>
+          <tr><td><strong>Family OOP Maximum</strong></td><td>SBC page 1, "Out-of-Pocket Limit" &rarr; Family</td><td>$15,000</td></tr>
+          <tr><td><strong>Employer HSA/HRA Contribution</strong></td><td>Employer benefits records</td><td>$500/year</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note-box">
+        <strong>MEC vs MV &mdash; A Practical Example:</strong><br/>
+        A "skinny" plan that covers only preventive care and basic doctor visits: <strong>MEC = YES</strong> (it's a real plan with preventive care). <strong>MV = NO</strong> (it doesn't cover hospital stays, AV is below 60%). The employer avoids the 4980H(a) penalty (they offered MEC), but faces 4980H(b) risk (if employees get marketplace subsidies, the employer owes $4,350/employee because the plan lacks MV).
+      </div>
+
+      <div class="how-to">
+        <h5>How to Check MV in CompliCore</h5>
+        <ol>
+          <li>Go to <strong>Plans</strong> in the sidebar. Select or create the plan.</li>
+          <li>Enter all plan design details (deductibles, copays, coinsurance, OOP max, HSA/HRA contributions).</li>
+          <li>Go to <strong>MV Calculator</strong>. The system calculates actuarial value using the HHS methodology.</li>
+          <li>Result shows: AV percentage (e.g., 72%), whether it meets the 60% threshold, and whether hospital/physician coverage is included.</li>
+          <li>If the plan fails MV, consider <strong>actuarial certification</strong> via the <strong>Actuary Marketplace</strong> for a formal certification.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 8. AFFORDABILITY TESTING -->
+    <!-- ============================================================ -->
+    <div class="section" id="s8">
+      <h2><span class="num">8</span> Step 6: Affordability Testing &mdash; Safe Harbors, Fields &amp; How to Test</h2>
+      <p class="subtitle">Three IRS-approved methods to prove coverage is affordable. The employer only needs to pass ONE per employee.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START["For each FT employee<br/>(including TRICARE veterans):"] --> GET["Get MONTHLY PREMIUM<br/>for self-only coverage<br/>(lowest-cost option)"]
+
+    GET --> RUN["Run all 3<br/>safe harbor tests"]
+
+    RUN --> SH1["SAFE HARBOR 1<br/>W-2 Wages"]
+    RUN --> SH2["SAFE HARBOR 2<br/>Rate of Pay"]
+    RUN --> SH3["SAFE HARBOR 3<br/>Federal Poverty Line"]
+
+    SH1 --> W2_CALC["Threshold =<br/>(W-2 wages x 9.02%) / 12"]
+    W2_CALC --> W2_CMP{Premium &le;<br/>threshold?}
+    W2_CMP -->|"YES"| W2_PASS["W-2 PASSES"]
+    W2_CMP -->|"NO"| W2_FAIL["W-2 FAILS"]
+
+    SH2 --> ROP_CALC["Threshold =<br/>Hourly rate x 130 x 9.02%"]
+    ROP_CALC --> ROP_CMP{Premium &le;<br/>threshold?}
+    ROP_CMP -->|"YES"| ROP_PASS["Rate of Pay PASSES"]
+    ROP_CMP -->|"NO"| ROP_FAIL["Rate of Pay FAILS"]
+
+    SH3 --> FPL_CALC["FPL = $15,060 + (size-1) x $5,380<br/>Threshold = (FPL x 9.02%) / 12<br/>(Individual = $113.20/mo)"]
+    FPL_CALC --> FPL_CMP{Premium &le;<br/>threshold?}
+    FPL_CMP -->|"YES"| FPL_PASS["FPL PASSES"]
+    FPL_CMP -->|"NO"| FPL_FAIL["FPL FAILS"]
+
+    W2_PASS --> DECIDE{ANY safe<br/>harbor passed?}
+    W2_FAIL --> DECIDE
+    ROP_PASS --> DECIDE
+    ROP_FAIL --> DECIDE
+    FPL_PASS --> DECIDE
+    FPL_FAIL --> DECIDE
+
+    DECIDE -->|"YES (1+)"| AFFORDABLE["AFFORDABLE<br/>No 4980H(b) risk"]
+    DECIDE -->|"NO (all 3 fail)"| NOT_AFFORDABLE["NOT AFFORDABLE<br/>4980H(b) risk: $4,350/yr"]
+
+    style SH1 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style SH2 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style SH3 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style W2_PASS fill:#059669,color:#fff,stroke:none
+    style ROP_PASS fill:#059669,color:#fff,stroke:none
+    style FPL_PASS fill:#059669,color:#fff,stroke:none
+    style W2_FAIL fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style ROP_FAIL fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style FPL_FAIL fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style AFFORDABLE fill:#059669,color:#fff,stroke:none
+    style NOT_AFFORDABLE fill:#dc2626,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <h3 class="sub">Fields to Enter for Each Safe Harbor</h3>
+      <table class="ref">
+        <thead><tr><th>Field Name</th><th>Type</th><th>Required?</th><th>Where to Get It</th><th>Used By</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Employee Monthly Premium</strong></td>
+            <td>Dollar/month</td>
+            <td style="color:#dc2626; font-weight:700;">REQUIRED</td>
+            <td>Benefits enrollment packet. Use <strong>employee-only</strong> premium for the <strong>lowest-cost</strong> plan option.</td>
+            <td>All 3 safe harbors</td>
+            <td>$200.00</td>
+          </tr>
+          <tr>
+            <td><strong>W-2 Box 1 Wages</strong></td>
+            <td>Annual dollar amount</td>
+            <td>Required for W-2 safe harbor</td>
+            <td>Employee's Form W-2, <strong>Box 1</strong>. Prior year or current-year estimate. From payroll system.</td>
+            <td>W-2 Safe Harbor</td>
+            <td>$48,000</td>
+          </tr>
+          <tr>
+            <td><strong>Hourly Rate of Pay</strong></td>
+            <td>Dollar/hour</td>
+            <td>Required for Rate of Pay</td>
+            <td>Employee's <strong>current</strong> hourly rate from payroll. For salaried: annual salary / 2,080 hrs.</td>
+            <td>Rate of Pay Safe Harbor</td>
+            <td>$23.08</td>
+          </tr>
+          <tr>
+            <td><strong>Household Size</strong></td>
+            <td>Whole number</td>
+            <td>Optional (defaults to 1)</td>
+            <td>Ask the employee, or default to 1. Using 1 is always valid and most conservative.</td>
+            <td>FPL Safe Harbor</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td><strong>Annual Salary</strong></td>
+            <td>Annual dollar amount</td>
+            <td>Optional (alternative to W-2)</td>
+            <td>If W-2 is unavailable, use current annual salary from HR records.</td>
+            <td>W-2 Safe Harbor (alt)</td>
+            <td>$52,000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="how-to">
+        <h5>Step-by-Step: How to Test Affordability in CompliCore</h5>
+        <ol>
+          <li>Go to <strong>Employees</strong>. Open the employee profile. Enter: monthly premium, annual salary/W-2 wages, hourly rate.</li>
+          <li>Save the profile.</li>
+          <li>Go to <strong>Affordability Calculator</strong>. Select the employee.</li>
+          <li>The system automatically runs all 3 safe harbor tests and shows PASS/FAIL for each with exact threshold calculations.</li>
+          <li>If a safe harbor fails, the system shows what the premium would need to be to pass that test.</li>
+        </ol>
+      </div>
+
+      <div class="scenario-box">
+        <h5>Minimum Data Needed</h5>
+        <p><strong>FPL Safe Harbor (easiest):</strong> Only needs employee monthly premium. If &le; $113.20/mo, PASSES automatically. No income data needed.</p>
+        <p><strong>W-2 Safe Harbor:</strong> Needs premium + W-2 wages (or salary).</p>
+        <p><strong>Rate of Pay:</strong> Needs premium + hourly rate.</p>
+        <p style="margin-top:8px; font-weight:600; color:#78350f;">Shortcut: Set premium &le; $113.20/mo and every employee passes affordability with zero income data.</p>
+      </div>
+
+      <div class="note-box">
+        <strong>Legal Basis for Safe Harbors:</strong> All three safe harbors are defined in <strong>Treas. Reg. &sect; 54.4980H-5(e)</strong>. The 9.02% affordability percentage for 2025 is set by <strong>Rev. Proc. 2024-35</strong>. Originally 9.5% in the ACA statute (IRC &sect; 36B(c)(2)(C)), it's indexed annually.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 9. WORKED EXAMPLES -->
+    <!-- ============================================================ -->
+    <div class="section" id="s9">
+      <h2><span class="num">9</span> Affordability Worked Examples (Real Numbers)</h2>
+      <p class="subtitle">Three scenarios showing how each safe harbor is calculated</p>
+
+      <h3 class="sub">Example A: Salaried Employee</h3>
+      <table class="ref">
+        <thead><tr><th>Data Point</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Employee monthly premium</td><td>$250/month</td></tr>
+          <tr><td>W-2 Wages</td><td>$48,000/year</td></tr>
+          <tr><td>Hourly Rate</td><td>$23.08/hour</td></tr>
+        </tbody>
+      </table>
+      <div class="callout-grid" style="margin-top:12px;">
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">W-2 Safe Harbor</h4>
+          <p>($48,000 x 9.02%) / 12 = <strong>$360.80/mo</strong></p>
+          <p>$250 &le; $360.80</p>
+          <div class="big" style="color:#059669;">PASS</div>
+        </div>
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">Rate of Pay</h4>
+          <p>$23.08 x 130 x 9.02% = <strong>$270.64/mo</strong></p>
+          <p>$250 &le; $270.64</p>
+          <div class="big" style="color:#059669;">PASS</div>
+        </div>
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:#dc2626;">FPL Safe Harbor</h4>
+          <p>($15,060 x 9.02%) / 12 = <strong>$113.20/mo</strong></p>
+          <p>$250 &gt; $113.20</p>
+          <div class="big" style="color:#dc2626;">FAIL</div>
+        </div>
+      </div>
+      <div class="success-box" style="margin-top:12px;">
+        <strong>Result:</strong> AFFORDABLE &mdash; 2 of 3 pass. Best: W-2 ($110.80 headroom).
+      </div>
+
+      <h3 class="sub">Example B: Low-Wage Hourly Worker (Household Size 3)</h3>
+      <table class="ref">
+        <thead><tr><th>Data Point</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Employee monthly premium</td><td>$180/month</td></tr>
+          <tr><td>W-2 Wages</td><td>$24,000/year</td></tr>
+          <tr><td>Hourly Rate</td><td>$12.00/hour</td></tr>
+          <tr><td>Household Size</td><td>3</td></tr>
+        </tbody>
+      </table>
+      <div class="callout-grid" style="margin-top:12px;">
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">W-2 Safe Harbor</h4>
+          <p>($24,000 x 9.02%) / 12 = <strong>$180.40/mo</strong></p>
+          <p>$180 &le; $180.40</p>
+          <div class="big" style="color:#059669;">PASS (barely!)</div>
+        </div>
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:#dc2626;">Rate of Pay</h4>
+          <p>$12 x 130 x 9.02% = <strong>$140.71/mo</strong></p>
+          <p>$180 &gt; $140.71</p>
+          <div class="big" style="color:#dc2626;">FAIL</div>
+        </div>
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">FPL Safe Harbor</h4>
+          <p>FPL(3) = $15,060 + 2 x $5,380 = $25,820</p>
+          <p>($25,820 x 9.02%) / 12 = <strong>$194.08/mo</strong></p>
+          <p>$180 &le; $194.08</p>
+          <div class="big" style="color:#059669;">PASS</div>
+        </div>
+      </div>
+      <div class="success-box" style="margin-top:12px;">
+        <strong>Result:</strong> AFFORDABLE &mdash; 2 of 3 pass. FPL passed due to household size 3.
+      </div>
+
+      <h3 class="sub">Example C: TRICARE Veteran Who Declines</h3>
+      <div class="callout-grid" style="margin-top:12px;">
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">W-2 Safe Harbor</h4>
+          <p>W-2 = $55,000. Threshold = ($55,000 x 9.02%) / 12 = <strong>$413.42/mo</strong></p>
+          <p>$200 premium &le; $413.42</p>
+          <div class="big" style="color:#059669;">PASS</div>
+        </div>
+        <div class="callout-card" style="background:#ede9fe; border-color:#c4b5fd;">
+          <h4 style="color:#7c3aed;">Penalty Risk?</h4>
+          <p>Veteran <strong>declined</strong> (uses TRICARE), but plan WAS affordable.</p>
+          <div class="big" style="color:#059669;">NONE</div>
+          <p style="font-size:11px; color:#7c3aed;">Offer made + affordable = zero risk.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 10. FINAL DECISION -->
+    <!-- ============================================================ -->
+    <div class="section" id="s10">
+      <h2><span class="num">10</span> Putting It All Together &mdash; Final Compliance Decision</h2>
+      <p class="subtitle">The complete decision matrix showing how MEC, MV, and Affordability interact</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    Q1{"95% of FT<br/>offered coverage?"} -->|"NO"| P_A["4980H(a) PENALTY"]
+    Q1 -->|"YES"| Q2{"Plan qualifies<br/>as MEC?"}
+
+    Q2 -->|"NO"| P_A2["4980H(a) PENALTY<br/>Non-MEC offer = no offer"]
+    Q2 -->|"YES"| Q3{"Plan meets<br/>Minimum Value?<br/>(60% AV + hospital)"}
+
+    Q3 -->|"NO"| P_B1["4980H(b) RISK<br/>$4,350 per employee<br/>who gets subsidy"]
+    Q3 -->|"YES"| Q4{"Coverage is<br/>affordable?<br/>(1+ safe harbor)"}
+
+    Q4 -->|"NO"| P_B2["4980H(b) RISK<br/>$4,350 per employee<br/>who gets subsidy"]
+    Q4 -->|"YES"| OK["FULLY COMPLIANT<br/>No penalty exposure"]
+
+    style P_A fill:#dc2626,color:#fff,stroke:none
+    style P_A2 fill:#dc2626,color:#fff,stroke:none
+    style P_B1 fill:#dc2626,color:#fff,stroke:none
+    style P_B2 fill:#dc2626,color:#fff,stroke:none
+    style OK fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <h3 class="sub">Decision Matrix</h3>
+      <table class="ref decision-table">
+        <thead><tr><th>95% Offered?</th><th>MEC?</th><th>Min Value?</th><th>Affordable?</th><th>Result</th><th>Penalty</th></tr></thead>
+        <tbody>
+          <tr><td class="yes">YES</td><td class="yes">YES</td><td class="yes">YES</td><td class="yes">YES</td><td style="color:#059669; font-weight:700;">COMPLIANT</td><td>$0</td></tr>
+          <tr><td class="no">NO</td><td>Any</td><td>Any</td><td>Any</td><td style="color:#dc2626; font-weight:700;">4980H(a)</td><td>(FT - 30) x $2,900/yr</td></tr>
+          <tr><td class="yes">YES</td><td class="no">NO</td><td>Any</td><td>Any</td><td style="color:#dc2626; font-weight:700;">4980H(a)</td><td>(FT - 30) x $2,900/yr</td></tr>
+          <tr><td class="yes">YES</td><td class="yes">YES</td><td class="no">NO</td><td>Any</td><td style="color:#dc2626; font-weight:700;">4980H(b)</td><td>$4,350/yr per affected</td></tr>
+          <tr><td class="yes">YES</td><td class="yes">YES</td><td class="yes">YES</td><td class="no">NO</td><td style="color:#dc2626; font-weight:700;">4980H(b)</td><td>$4,350/yr per affected</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 11. PENALTIES -->
+    <!-- ============================================================ -->
+    <div class="section" id="s11">
+      <h2><span class="num">11</span> Penalty Calculation &mdash; Which Failure Triggers Which Penalty</h2>
+      <p class="subtitle">Exact penalty formulas tied to each compliance failure</p>
+
+      <div class="callout-grid">
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:#dc2626;">4980H(a) &mdash; "Sledgehammer"</h4>
+          <div class="big" style="color:#dc2626;">$2,900/yr</div>
+          <p><strong>Triggered by:</strong></p>
+          <p>- Not offering to 95%+ of FT</p>
+          <p>- Offering a plan that is NOT MEC</p>
+          <p><strong>Formula:</strong> (FT - 30) x $2,900</p>
+          <p style="margin-top:4px;"><strong>Example:</strong> 62 FT &rarr; (62-30) x $2,900 = <strong>$92,800/yr</strong></p>
+        </div>
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:#dc2626;">4980H(b) &mdash; "Tack Hammer"</h4>
+          <div class="big" style="color:#dc2626;">$4,350/yr</div>
+          <p><strong>Triggered by:</strong></p>
+          <p>- Plan fails Minimum Value</p>
+          <p>- Coverage is unaffordable</p>
+          <p>(AND employee gets marketplace subsidy)</p>
+          <p><strong>Formula:</strong> $4,350 x subsidized employees</p>
+          <p style="margin-top:4px;"><strong>Example:</strong> 5 employees &rarr; 5 x $4,350 = <strong>$21,750/yr</strong></p>
+        </div>
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">Fully Compliant</h4>
+          <div class="big" style="color:#059669;">$0</div>
+          <p>95%+ offered MEC</p>
+          <p>Plan meets MV (60%+)</p>
+          <p>Coverage is affordable</p>
+        </div>
+      </div>
+
+      <div class="warn-box" style="margin-top:16px;">
+        <strong>Employer pays 4980H(a) OR 4980H(b), never both for the same month.</strong> The IRS calculates both and applies the lesser amount.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 12. EDGE CASES -->
+    <!-- ============================================================ -->
+    <div class="section" id="s12">
+      <h2><span class="num">12</span> Edge Cases, Error Scenarios &amp; FAQ</h2>
+      <p class="subtitle">Tricky scenarios and how they're handled</p>
+      <table class="ref">
+        <thead><tr><th>Scenario</th><th>What Happens</th><th>Correct Handling</th></tr></thead>
+        <tbody>
+          <tr><td><strong>"Skinny" MEC plan (preventive only)</strong></td><td>Qualifies as MEC but fails Minimum Value</td><td>Avoids 4980H(a) but triggers 4980H(b) risk if employees get subsidies. Employer should upgrade to a plan with hospital/physician coverage.</td></tr>
+          <tr><td><strong>HDHP with very high deductible</strong></td><td>Qualifies as MEC. MV depends on AV calculation.</td><td>Run HHS MV Calculator. If AV &ge; 60% and includes hospital/physician, it passes both MEC and MV. Many HDHPs pass when HSA employer contributions are factored in.</td></tr>
+          <tr><td><strong>Employee has no W-2 data</strong></td><td>W-2 safe harbor can't be calculated</td><td>Skip W-2 test. Run Rate of Pay and FPL.</td></tr>
+          <tr><td><strong>All 3 safe harbors fail for one employee</strong></td><td>Coverage is unaffordable for that person</td><td>4980H(b) risk if they get a marketplace subsidy.</td></tr>
+          <tr><td><strong>TRICARE veteran declines</strong></td><td>Expected behavior</td><td>Offer counts toward 95%. Run affordability test on offered plan anyway.</td></tr>
+          <tr><td><strong>Multiple plans offered</strong></td><td>Which is tested?</td><td>Lowest-cost employee-only option for affordability. Best plan for MV.</td></tr>
+          <tr><td><strong>New hire (mid-year)</strong></td><td>90-day waiting period allowed</td><td>Offer within 90 days of start date.</td></tr>
+          <tr><td><strong>Plan has no EHBs</strong></td><td>Not required for large employers</td><td>Missing EHBs doesn't affect MEC or MV for ALE plans. No penalty.</td></tr>
+          <tr><td><strong>Plan covers some but not all 10 EHBs</strong></td><td>Not a compliance issue for ALEs</td><td>Large employer plans are exempt from EHB requirements. Focus on MEC and MV instead.</td></tr>
+          <tr><td><strong>95% exactly</strong></td><td>"95% or more"</td><td>PASSES.</td></tr>
+          <tr><td><strong>Zero FT employees</strong></td><td>Division by zero</td><td>Return 100% compliant. No offer obligation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 13. REFERENCE -->
+    <!-- ============================================================ -->
+    <div class="section" id="s13">
+      <h2><span class="num">13</span> Complete Reference: Every Number &amp; Threshold</h2>
+      <p class="subtitle">All thresholds used in coverage offering, MEC, MV, and affordability (2025 values)</p>
+      <table class="ref">
+        <thead><tr><th>Number</th><th>What It Is</th><th>Where Used</th></tr></thead>
+        <tbody>
+          <tr><td><strong>95%</strong></td><td>Min % of FT employees offered coverage</td><td>Coverage offer threshold. Below = 4980H(a).</td></tr>
+          <tr><td><strong>130 hrs/month</strong></td><td>Full-time employee threshold</td><td>Employees above = FT. Below = PT.</td></tr>
+          <tr><td><strong>60%</strong></td><td>Minimum Value actuarial value threshold</td><td>Plan must cover &ge; 60% of costs. Below = fails MV.</td></tr>
+          <tr><td><strong>9.02%</strong></td><td>2025 affordability percentage</td><td>Employee premium &le; 9.02% of income.</td></tr>
+          <tr><td><strong>$113.20/mo</strong></td><td>2025 FPL safe harbor (individual)</td><td>Premium at or below = automatically affordable.</td></tr>
+          <tr><td><strong>$15,060</strong></td><td>2025 FPL (individual, mainland US)</td><td>FPL safe harbor base. +$5,380 per additional member.</td></tr>
+          <tr><td><strong>$5,380</strong></td><td>FPL increment per household member</td><td>FPL(N) = $15,060 + (N-1) x $5,380</td></tr>
+          <tr><td><strong>130 hours</strong></td><td>Monthly hours for Rate of Pay safe harbor</td><td>Threshold = rate x 130 x 9.02%</td></tr>
+          <tr><td><strong>$2,900/yr</strong></td><td>4980H(a) penalty per FT employee (minus 30)</td><td>For failing to offer MEC to 95%+.</td></tr>
+          <tr><td><strong>$4,350/yr</strong></td><td>4980H(b) penalty per affected employee</td><td>For failing MV or affordability (if employee gets subsidy).</td></tr>
+          <tr><td><strong>30 employees</strong></td><td>4980H(a) free zone</td><td>Penalty = (FT - 30) x $2,900.</td></tr>
+          <tr><td><strong>90 days</strong></td><td>Max waiting period for new hires</td><td>Must offer coverage within 90 days.</td></tr>
+          <tr><td><strong>26 years old</strong></td><td>Dependent coverage age limit</td><td>Plans must cover children to age 26.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="success-box" style="margin-top:20px;">
+        <strong>One-Sentence Summary:</strong><br/>
+        An ALE must (1) <strong>offer coverage</strong> to 95%+ of FT employees including TRICARE veterans, (2) ensure the plan qualifies as <strong>MEC</strong> (a real group health plan with preventive care &mdash; low bar), (3) ensure it provides <strong>Minimum Value</strong> (60%+ actuarial value with substantial hospital/physician coverage &mdash; higher bar), and (4) prove <strong>affordability</strong> via at least one IRS safe harbor (W-2, Rate of Pay, or FPL) &mdash; or face penalties of $2,900/employee for not offering MEC, or $4,350/affected employee for failing MV or affordability.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e40af',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#94a3b8',
+        secondaryColor: '#f1f5f9',
+        tertiaryColor: '#ecfdf5',
+        fontFamily: 'Inter, -apple-system, sans-serif',
+        fontSize: '13px'
+      },
+      flowchart: { curve: 'basis', padding: 16, nodeSpacing: 30, rankSpacing: 40, htmlLabels: true }
+    });
+  </script>
+</body>
+</html>

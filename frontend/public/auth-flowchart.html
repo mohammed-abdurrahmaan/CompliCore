@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompliCore - Auth Flow Specification v2</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #1e40af;
+      --success: #059669;
+      --error: #dc2626;
+      --warning: #d97706;
+      --accent-bg: #eff6ff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header .badge {
+      display: inline-block;
+      background: var(--accent-bg);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .header p { color: var(--muted); font-size: 15px; }
+    .meta-row {
+      display: flex; justify-content: center; gap: 32px; margin-top: 16px;
+      font-size: 13px; color: var(--muted); flex-wrap: wrap;
+    }
+    .meta-row strong { color: var(--text); }
+    .toc {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px 32px; margin-bottom: 24px;
+    }
+    .toc h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+    .toc ol { padding-left: 20px; column-count: 2; column-gap: 32px; }
+    .toc li { font-size: 13px; padding: 3px 0; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .section {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px; margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 20px; font-weight: 700; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section h2 .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--primary); color: #fff;
+      font-size: 13px; font-weight: 700; border-radius: 8px; flex-shrink: 0;
+    }
+    .section .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .mermaid-wrap {
+      background: #fafbfc; border: 1px solid var(--border); border-radius: 8px;
+      padding: 24px 16px; overflow-x: auto; margin-bottom: 20px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    table.ref {
+      width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px;
+    }
+    table.ref th {
+      background: #f1f5f9; text-align: left; padding: 10px 14px;
+      font-weight: 700; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border);
+    }
+    table.ref td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top;
+    }
+    table.ref tr:last-child td { border-bottom: none; }
+    .code {
+      font-family: 'SF Mono', Consolas, monospace; font-size: 12px;
+      background: #f1f5f9; padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+    }
+    .code-red { color: var(--error); }
+    .code-blue { color: var(--primary); }
+    .tag {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .tag-fe { background: #dbeafe; color: #1e40af; }
+    .tag-be { background: #fef3c7; color: #92400e; }
+    .tag-both { background: #e0e7ff; color: #3730a3; }
+    .tag-browser { background: #ecfdf5; color: #065f46; }
+    .tag-gap { background: #fef2f2; color: #991b1b; }
+    .note-box {
+      background: var(--accent-bg); border-left: 3px solid var(--primary);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .note-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .warn-box {
+      background: #fffbeb; border-left: 3px solid var(--warning);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .warn-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--warning); }
+    .gap-box {
+      background: #fef2f2; border-left: 3px solid var(--error);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .gap-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--error); }
+    .field-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .field-table th {
+      background: #f1f5f9; text-align: left; padding: 8px 14px;
+      font-weight: 700; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border);
+    }
+    .field-table td { padding: 8px 14px; border-bottom: 1px solid var(--border); }
+    .required { color: var(--error); font-weight: 700; }
+    .optional { color: var(--muted); font-style: italic; }
+    h3.sub { font-size: 15px; margin-top: 24px; margin-bottom: 8px; font-weight: 700; }
+    ul.checklist { list-style: none; padding-left: 0; margin-top: 8px; }
+    ul.checklist li { padding: 4px 0; font-size: 13px; }
+    ul.checklist li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+    ul.checklist li.done::before { background: var(--success); }
+    ul.checklist li.missing::before { background: var(--error); }
+    ul.checklist li.partial::before { background: var(--warning); }
+    @media print {
+      body { background: #fff; }
+      .container { padding: 20px; }
+      .section { break-inside: avoid; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="badge">Product Specification v2 - Complete</div>
+      <h1>Authentication Flow - CompliCore</h1>
+      <p>Login, Registration, Session Management, Post-Auth Routing, Employer Onboarding &amp; All Error Scenarios</p>
+      <div class="meta-row">
+        <span><strong>Platform:</strong> CompliCore ACA Compliance</span>
+        <span><strong>Version:</strong> 2.0</span>
+        <span><strong>Date:</strong> March 2026</span>
+        <span><strong>Auth:</strong> JWT / HS256 / 7-day expiry</span>
+        <span><strong>Roles:</strong> Employer, Actuary</span>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc">
+      <h3>Table of Contents</h3>
+      <ol>
+        <li><a href="#s1">High-Level Authentication Overview</a></li>
+        <li><a href="#s2">App Bootstrap &amp; Loading States</a></li>
+        <li><a href="#s3">Sign In Flow (Detailed)</a></li>
+        <li><a href="#s4">Registration Flow (Detailed)</a></li>
+        <li><a href="#s5">Employer Onboarding (Post-Auth Critical Path)</a></li>
+        <li><a href="#s6">Session &amp; Token Lifecycle</a></li>
+        <li><a href="#s7">Logout Flow</a></li>
+        <li><a href="#s8">Post-Authentication Routing &amp; Role Differences</a></li>
+        <li><a href="#s9">Multi-Employer Switching</a></li>
+        <li><a href="#s10">Complete Error Scenarios Reference</a></li>
+        <li><a href="#s11">Validation Coverage Audit</a></li>
+        <li><a href="#s12">Known Gaps &amp; Missing Features</a></li>
+        <li><a href="#s13">API Endpoints Reference</a></li>
+        <li><a href="#s14">Data Model: User Object</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. HIGH-LEVEL OVERVIEW -->
+    <div class="section" id="s1">
+      <h2><span class="num">1</span> High-Level Authentication Overview</h2>
+      <p class="subtitle">Complete user lifecycle from first visit through authenticated session to logout</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START((User visits app)) --> BOOTSTRAP[App Bootstrap<br/>AuthProvider initializes]
+    BOOTSTRAP --> CHECK_TOKEN{Token in<br/>localStorage?}
+
+    CHECK_TOKEN -->|Yes| VALIDATE[GET /api/auth/me<br/>Validate token with backend]
+    CHECK_TOKEN -->|No| SHOW_SPINNER[Show loading spinner<br/>then set loading=false]
+    SHOW_SPINNER --> LOGIN_PAGE[Show Login Page<br/>/login]
+
+    VALIDATE --> VALID{Response?}
+    VALID -->|200 OK| SET_USER[Set user state<br/>loading = false]
+    VALID -->|401 Expired| CLEAR_TOKEN[Clear localStorage<br/>Reset all state<br/>loading = false]
+    VALID -->|401 Invalid| CLEAR_TOKEN
+    VALID -->|Network Error| CLEAR_TOKEN
+
+    CLEAR_TOKEN --> LOGIN_PAGE
+
+    SET_USER --> FETCH_EMP[GET /api/employers<br/>Fetch employer list]
+    FETCH_EMP --> HAS_EMP{Employers exist?}
+    FETCH_EMP -->|API Error| EMP_FAIL[employers = empty array<br/>Error logged to console]
+    EMP_FAIL --> HAS_EMP
+
+    HAS_EMP -->|Yes| AUTO_SELECT[Auto-select first employer<br/>if none selected]
+    HAS_EMP -->|No| NO_EMP[employers = empty array]
+    AUTO_SELECT --> DASHBOARD
+    NO_EMP --> DASHBOARD
+
+    DASHBOARD{Route?}
+    DASHBOARD -->|Employer + has employers| EMP_DASH[Employer Dashboard<br/>with compliance data]
+    DASHBOARD -->|Employer + no employers| ONBOARD[Set Up Organization<br/>prompt]
+    DASHBOARD -->|Actuary| ACT_DASH[Actuary Dashboard<br/>Certifications queue]
+
+    LOGIN_PAGE --> USER_CHOICE{User action}
+    USER_CHOICE -->|Sign In tab| SIGN_IN[Sign In Flow<br/>Section 3]
+    USER_CHOICE -->|Register tab| SIGN_UP[Registration Flow<br/>Section 4]
+
+    SIGN_IN --> AUTH_OK[Auth Success:<br/>Token + User returned]
+    SIGN_UP --> AUTH_OK
+    AUTH_OK --> SET_USER
+
+    EMP_DASH --> LOGOUT_BTN[User clicks Logout]
+    ACT_DASH --> LOGOUT_BTN
+    ONBOARD --> CREATE_EMP[Create Employer<br/>Section 5]
+    CREATE_EMP --> EMP_DASH
+
+    LOGOUT_BTN --> CLEAR_ALL[Clear token + state<br/>Navigate to /login]
+    CLEAR_ALL --> LOGIN_PAGE
+
+    style START fill:#1e40af,color:#fff,stroke:none
+    style EMP_DASH fill:#059669,color:#fff,stroke:none
+    style ACT_DASH fill:#059669,color:#fff,stroke:none
+    style ONBOARD fill:#fbbf24,color:#0f172a,stroke:none
+    style CLEAR_TOKEN fill:#dc2626,color:#fff,stroke:none
+    style CLEAR_ALL fill:#dc2626,color:#fff,stroke:none
+    style LOGIN_PAGE fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style AUTH_OK fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style EMP_FAIL fill:#fef2f2,color:#991b1b,stroke:#fecaca
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. APP BOOTSTRAP & LOADING STATES -->
+    <div class="section" id="s2">
+      <h2><span class="num">2</span> App Bootstrap &amp; Loading States</h2>
+      <p class="subtitle">What the user sees during initial app load and auth verification</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    subgraph "App.js - AppRoutes Component"
+        MOUNT[Component mounts] --> READ_AUTH[useAuth hook<br/>reads loading state]
+        READ_AUTH --> IS_LOADING{loading = true?}
+        IS_LOADING -->|Yes| SPINNER1["Full-screen spinner<br/>(centered animated circle)<br/>Blocks ALL routes"]
+        IS_LOADING -->|No| ROUTE_CHECK[Evaluate routes]
+    end
+
+    subgraph "AuthContext - AuthProvider"
+        INIT[Provider initializes] --> TOKEN_CHECK{localStorage<br/>has token?}
+        TOKEN_CHECK -->|Yes| API_CALL["GET /api/auth/me<br/>loading = true (blocking)"]
+        TOKEN_CHECK -->|No| DONE1[loading = false]
+
+        API_CALL --> API_OK{Response}
+        API_OK -->|Success| SET_OK[user = response<br/>loading = false]
+        API_OK -->|Error| SET_FAIL[Clear token<br/>user = null<br/>loading = false]
+    end
+
+    subgraph "ProtectedRoute Component"
+        PR_CHECK[Wraps all / routes] --> PR_LOADING{loading?}
+        PR_LOADING -->|Yes| SPINNER2[Full-screen spinner]
+        PR_LOADING -->|No| PR_USER{user exists?}
+        PR_USER -->|Yes| RENDER[Render children<br/>DashboardLayout]
+        PR_USER -->|No| REDIRECT["Navigate to /login"]
+    end
+
+    subgraph "Login Route Guard"
+        LR[/login route] --> LR_USER{user exists?}
+        LR_USER -->|Yes| LR_REDIRECT["Navigate to /<br/>(prevent re-login)"]
+        LR_USER -->|No| LR_SHOW[Show LoginPage]
+    end
+
+    style SPINNER1 fill:#f1f5f9,color:#64748b,stroke:#e2e8f0
+    style SPINNER2 fill:#f1f5f9,color:#64748b,stroke:#e2e8f0
+    style SET_FAIL fill:#dc2626,color:#fff,stroke:none
+    style REDIRECT fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style LR_REDIRECT fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+        </div>
+      </div>
+      <div class="note-box">
+        <strong>Key Behavior:</strong><br/>
+        - While <code>loading = true</code>, a centered animated spinner blocks the entire UI. No routes render. This prevents flashes of the login page for returning users.<br/>
+        - The loading state transitions to false in ALL code paths (success, error, no token) ensuring the spinner never gets stuck.<br/>
+        - If an authenticated user directly visits <code>/login</code>, they are auto-redirected to <code>/</code> (Dashboard).
+      </div>
+    </div>
+
+    <!-- 3. SIGN IN FLOW -->
+    <div class="section" id="s3">
+      <h2><span class="num">3</span> Sign In Flow (Detailed)</h2>
+      <p class="subtitle">Existing user authentication with every error branch and UI behavior</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    A["User on /login<br/>'Sign In' tab (default active)"] --> B["Enter Email<br/>input type=email"]
+    B --> C["Enter Password<br/>input type=password"]
+    C --> D["Click 'Sign In'<br/>(or press Enter - form submit)"]
+
+    D --> V{Any frontend<br/>validation?}
+    V -->|"NO - none exists"| V1["Proceeds directly to API<br/>even with empty fields"]
+
+    V1 --> BROWSER{Browser HTML5<br/>email check}
+    BROWSER -->|"type=email invalid<br/>(no @ symbol etc)"| BROWSER_ERR["Browser shows native<br/>validation tooltip<br/>Form does NOT submit"]
+    BROWSER -->|Valid or empty| SUBMIT[Form submits]
+
+    SUBMIT --> D1[Button disabled = true<br/>Text changes to<br/>'Signing in...']
+
+    D1 --> E["POST /api/auth/login<br/>{email, password}"]
+
+    E --> F{Backend Response}
+
+    F -->|200 OK| G["Returns:<br/>token (JWT, 7-day)<br/>user {id, email, name,<br/>role, company_name,<br/>created_at}"]
+    F -->|"401"| H["'Invalid credentials'<br/>(wrong email OR password -<br/>same message for security)"]
+    F -->|"422"| I["Pydantic validation error<br/>(malformed payload)"]
+    F -->|"500"| J[Server error]
+    F -->|Network Error| K["Request failed<br/>(timeout, CORS, DNS)"]
+
+    G --> G1["localStorage.setItem('token', jwt)"]
+    G1 --> G2[AuthContext: setToken, setUser]
+    G2 --> G3["Toast SUCCESS: 'Welcome back'"]
+    G3 --> G4["Button: disabled = false"]
+    G4 --> G5["Auto-redirect to '/'<br/>via React Router"]
+    G5 --> G6[AuthContext triggers<br/>employer fetch]
+
+    H --> ERR["Toast ERROR: 'Invalid credentials'"]
+    I --> ERR2["Toast ERROR: 'Login failed'"]
+    J --> ERR3["Toast ERROR: 'Login failed'"]
+    K --> ERR4["Toast ERROR: 'Login failed'"]
+
+    ERR --> RETRY["Button: disabled = false<br/>Form fields remain filled<br/>User can edit and retry"]
+    ERR2 --> RETRY
+    ERR3 --> RETRY
+    ERR4 --> RETRY
+
+    BROWSER_ERR --> RETRY2[User fixes email<br/>and resubmits]
+
+    style A fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style G5 fill:#059669,color:#fff,stroke:none
+    style G3 fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style H fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style I fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style J fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style K fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style BROWSER_ERR fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style V1 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+        </div>
+      </div>
+      <div class="warn-box">
+        <strong>Design Note - No Frontend Validation on Login:</strong><br/>
+        The Sign In form has <strong>zero</strong> frontend validation. Empty email + empty password will be sent to the API. The backend returns 401 "Invalid credentials". The only guardrail is the browser's native HTML5 <code>type="email"</code> check, which prevents malformed emails from submitting but does NOT prevent empty fields.
+      </div>
+    </div>
+
+    <!-- 4. REGISTRATION FLOW -->
+    <div class="section" id="s4">
+      <h2><span class="num">4</span> Registration Flow (Detailed)</h2>
+      <p class="subtitle">New user sign-up with role selection, conditional fields, and all error handling</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    A["User on /login<br/>Clicks 'Register' tab"] --> TAB["Tab switches to register<br/>Login form state preserved<br/>Register form shown"]
+
+    TAB --> B["1. Enter Full Name *"]
+    B --> C["2. Enter Email *<br/>(type=email)"]
+    C --> D["3. Enter Password *<br/>(type=password)"]
+    D --> E["4. Select Role *<br/>Dropdown: Employer | Actuary<br/>Default: Employer"]
+
+    E --> ROLE{Role value?}
+    ROLE -->|Employer| F1["5. Company Name field SHOWN<br/>(optional, not required)"]
+    ROLE -->|Actuary| F2["5. Company Name field HIDDEN<br/>Not in form"]
+
+    F1 --> G["Click 'Create Account'<br/>(or press Enter)"]
+    F2 --> G
+
+    G --> FE{Frontend validation<br/>check 3 fields}
+    FE -->|"!name"| FE_ERR["Toast ERROR:<br/>'Please fill all required fields'<br/>API NOT called"]
+    FE -->|"!email"| FE_ERR
+    FE -->|"!password"| FE_ERR
+    FE_ERR --> FE_FIX["loading NOT set<br/>Form stays filled<br/>User fixes and retries"]
+
+    FE -->|All 3 present| BROWSER{Browser HTML5<br/>email check}
+    BROWSER -->|Invalid email format| BROWSER_ERR["Browser native tooltip<br/>Form does NOT submit"]
+    BROWSER -->|Valid| SUBMIT[Form submits]
+
+    SUBMIT --> LOAD["Button disabled = true<br/>Text: 'Creating account...'"]
+
+    LOAD --> API["POST /api/auth/register<br/>{name, email, password,<br/>role, company_name}"]
+
+    API --> RESP{Backend Response}
+
+    RESP -->|200 OK| OK["Returns:<br/>token (JWT, 7-day)<br/>user {id (UUID), email,<br/>name, role, company_name,<br/>created_at}"]
+    RESP -->|"400"| DUP["'Email already registered'<br/>Email exists in DB"]
+    RESP -->|"422"| VAL["Pydantic validation error<br/>Missing required field in payload"]
+    RESP -->|"500"| SRV[Server error]
+    RESP -->|Network Error| NET[Request failed]
+
+    OK --> S1["localStorage.setItem('token', jwt)"]
+    S1 --> S2[AuthContext: setToken, setUser]
+    S2 --> S3["Toast SUCCESS: 'Account created'"]
+    S3 --> S4["Button: disabled = false"]
+    S4 --> S5["Auto-redirect to '/'"]
+    S5 --> S6["Employer fetch returns<br/>empty array (new user)"]
+    S6 --> S7{User role?}
+    S7 -->|Employer| S8["Dashboard shows<br/>'Set Up Your Organization'<br/>See Section 5"]
+    S7 -->|Actuary| S9["Actuary Dashboard<br/>Empty cert queue"]
+
+    DUP --> E1["Toast ERROR:<br/>'Email already registered'"]
+    VAL --> E2["Toast ERROR:<br/>'Registration failed'"]
+    SRV --> E3["Toast ERROR:<br/>'Registration failed'"]
+    NET --> E4["Toast ERROR:<br/>'Registration failed'"]
+
+    E1 --> RETRY["Button: disabled = false<br/>Form stays filled<br/>User changes email"]
+    E2 --> RETRY
+    E3 --> RETRY
+    E4 --> RETRY
+
+    style A fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style S8 fill:#fbbf24,color:#0f172a,stroke:none
+    style S9 fill:#059669,color:#fff,stroke:none
+    style S3 fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style FE_ERR fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style DUP fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style VAL fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style SRV fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style NET fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style BROWSER_ERR fill:#fffbeb,color:#92400e,stroke:#fde68a
+        </div>
+      </div>
+
+      <h3 class="sub">Registration Form Fields</h3>
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Input Type</th><th>Required</th><th>Frontend Validation</th><th>Backend Validation</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Full Name</td><td>text</td><td class="required">Yes *</td><td>Non-empty check</td><td>Pydantic: required string</td><td>Stored as <code>name</code> on user doc</td></tr>
+          <tr><td>Email</td><td>email</td><td class="required">Yes *</td><td>Non-empty + browser HTML5 email format</td><td>Pydantic: required string + unique check in DB</td><td>Used as login identity. Case-sensitive.</td></tr>
+          <tr><td>Password</td><td>password</td><td class="required">Yes *</td><td>Non-empty check only</td><td>Pydantic: required string. Hashed with bcrypt.</td><td>Placeholder says "Min 6 characters" but <strong>no min-length is enforced</strong> - even 1-char passwords are accepted</td></tr>
+          <tr><td>Role</td><td>select dropdown</td><td class="required">Yes *</td><td>Always has a value (defaults to "employer")</td><td>Accepts any string (no enum validation)</td><td>Values: <code>employer</code> or <code>actuary</code>. Determines entire post-login experience.</td></tr>
+          <tr><td>Company Name</td><td>text</td><td class="optional">No</td><td>None</td><td>Optional[str], defaults to ""</td><td>Only <strong>visible</strong> when role = employer. Stored on user doc, does NOT create an employer entity. Employer entities are created separately post-auth.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="warn-box">
+        <strong>Tab Switching Behavior:</strong><br/>
+        - Default active tab on page load: <strong>Sign In</strong><br/>
+        - Switching tabs preserves form state in both tabs (React state not reset)<br/>
+        - The <code>loading</code> state is shared: if one form is submitting, the other tab's button would also appear disabled<br/>
+        - Both tabs share the same Card container and visual layout
+      </div>
+    </div>
+
+    <!-- 5. EMPLOYER ONBOARDING -->
+    <div class="section" id="s5">
+      <h2><span class="num">5</span> Employer Onboarding (Post-Auth Critical Path)</h2>
+      <p class="subtitle">How new employer users create their first organization - two entry points with different forms</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    NEW_USER["New employer user<br/>0 employers"] --> WHERE{Where does the<br/>prompt appear?}
+
+    WHERE -->|Dashboard page| DASH_PROMPT["Card: 'Set Up Your Organization'<br/>+ Add Employer button<br/>Opens dialog"]
+    WHERE -->|Sidebar| SIDE_PROMPT["Sidebar: '+ Add Employer' button<br/>Under ORGANIZATION header<br/>Opens dialog"]
+
+    DASH_PROMPT --> DASH_FORM["Dashboard Dialog Form:<br/>1. Company Name *<br/>2. EIN<br/>3. Payroll Provider (dropdown)<br/>4. Insurance Carrier"]
+
+    SIDE_PROMPT --> SIDE_FORM["Sidebar Dialog Form:<br/>1. Company Name *<br/>2. EIN<br/>3. Address<br/>4. Contact Email"]
+
+    DASH_FORM --> VALIDATE_D{Company Name<br/>provided?}
+    SIDE_FORM --> VALIDATE_S{Company Name<br/>provided?}
+
+    VALIDATE_D -->|Empty| ERR_D["Toast ERROR:<br/>'Company name required'<br/>API NOT called"]
+    VALIDATE_S -->|Empty| ERR_S["Toast ERROR:<br/>'Company name is required'<br/>API NOT called"]
+
+    VALIDATE_D -->|Present| API_CALL["POST /api/employers<br/>{name, ein, payroll_provider,<br/>insurance_carrier, ...}"]
+    VALIDATE_S -->|Present| API_CALL
+
+    API_CALL --> RESP{Response}
+    RESP -->|200 OK| SUCCESS["Employer created<br/>Added to employers list<br/>Auto-selected as active"]
+    RESP -->|Error| API_ERR["Toast ERROR:<br/>'Failed to create employer'"]
+
+    SUCCESS --> S1["Toast SUCCESS:<br/>'Employer created'"]
+    S1 --> S2[Dialog closes<br/>Form resets]
+    S2 --> S3["Dashboard reloads<br/>with employer data"]
+
+    ERR_D --> RETRY[User fixes and retries]
+    ERR_S --> RETRY
+    API_ERR --> RETRY
+
+    style NEW_USER fill:#fbbf24,color:#0f172a,stroke:none
+    style S3 fill:#059669,color:#fff,stroke:none
+    style ERR_D fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style ERR_S fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style API_ERR fill:#fef2f2,color:#991b1b,stroke:#fecaca
+        </div>
+      </div>
+
+      <h3 class="sub">Two Dialog Forms Comparison</h3>
+      <table class="ref">
+        <thead><tr><th>Field</th><th>Dashboard Dialog</th><th>Sidebar Dialog</th></tr></thead>
+        <tbody>
+          <tr><td>Company Name *</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>EIN</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Payroll Provider</td><td>Yes (dropdown: ADP, Gusto, Paychex, QuickBooks, Other)</td><td>No</td></tr>
+          <tr><td>HR System</td><td>No (in state but not rendered)</td><td>No</td></tr>
+          <tr><td>Insurance Carrier</td><td>Yes (text input)</td><td>No</td></tr>
+          <tr><td>Address</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Contact Email</td><td>No (auto-set from user email)</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+
+      <div class="warn-box">
+        <strong>Note:</strong> The two employer creation dialogs have <strong>different field sets</strong>. The Dashboard dialog focuses on compliance-related fields (payroll provider, insurance carrier), while the Sidebar dialog collects basic info (address, contact email). Both hit the same <code>POST /api/employers</code> endpoint. All fields are stored.
+      </div>
+    </div>
+
+    <!-- 6. SESSION & TOKEN LIFECYCLE -->
+    <div class="section" id="s6">
+      <h2><span class="num">6</span> Session &amp; Token Lifecycle</h2>
+      <p class="subtitle">JWT token creation, storage, validation, and expiry handling</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    subgraph "Token Creation"
+        LOGIN_OK[Login or Register success] --> GEN["Generate JWT<br/>Algorithm: HS256<br/>Secret: JWT_SECRET env var<br/>Payload: user_id, role, exp"]
+        GEN --> EXPIRY["Expiry: now + 7 days<br/>(604,800 seconds)"]
+        EXPIRY --> STORE["localStorage.setItem('token', jwt)<br/>AuthContext: setToken(jwt)"]
+    end
+
+    subgraph "Session Persistence (App Reload)"
+        RELOAD[Browser reload / new tab] --> READ["Read token from<br/>localStorage"]
+        READ --> VERIFY["GET /api/auth/me<br/>Header: Bearer token"]
+        VERIFY -->|"200: user data"| RESTORE[Restore full session]
+        VERIFY -->|"401: Token expired"| EXPIRE[Token past 7 days]
+        VERIFY -->|"401: Invalid token"| TAMPER[Token corrupted/wrong secret]
+        VERIFY -->|"401: User not found"| DELETED[User deleted from DB<br/>but token still valid]
+        VERIFY -->|Network error| NET_ERR[API unreachable]
+    end
+
+    subgraph "Session Termination"
+        EXPIRE --> CLEAR
+        TAMPER --> CLEAR
+        DELETED --> CLEAR
+        NET_ERR --> CLEAR
+        LOGOUT_CLICK[User clicks Logout] --> CLEAR
+        CLEAR["Clear all state:<br/>localStorage.removeItem('token')<br/>token = null<br/>user = null<br/>employers = []<br/>selectedEmployer = null"]
+        CLEAR --> REDIR[Redirect to /login]
+    end
+
+    subgraph "Token Usage (Every API Call)"
+        ANY_API[Any authenticated request] --> HEADER["Authorization: Bearer token<br/>via authHeaders() helper"]
+        HEADER --> BACKEND["Backend: jwt.decode()<br/>Extract user_id, role"]
+        BACKEND --> LOOKUP["DB lookup: users.find_one<br/>{id: user_id}"]
+        LOOKUP -->|Found| OK[Request proceeds]
+        LOOKUP -->|Not found| REJECT["401: User not found"]
+    end
+
+    style LOGIN_OK fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style RESTORE fill:#059669,color:#fff,stroke:none
+    style EXPIRE fill:#dc2626,color:#fff,stroke:none
+    style TAMPER fill:#dc2626,color:#fff,stroke:none
+    style DELETED fill:#dc2626,color:#fff,stroke:none
+    style NET_ERR fill:#dc2626,color:#fff,stroke:none
+    style REDIR fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style REJECT fill:#fef2f2,color:#991b1b,stroke:#fecaca
+        </div>
+      </div>
+      <div class="note-box">
+        <strong>Token Technical Details:</strong><br/>
+        - Algorithm: <code>HS256</code> (HMAC-SHA256)<br/>
+        - Signing secret: <code>JWT_SECRET</code> env var (defaults to <code>'complicore-secret-key-2025'</code> if not set)<br/>
+        - Expiry: <code>datetime.now(UTC).timestamp() + 86400 * 7</code> (7 days from creation)<br/>
+        - Payload: <code>{user_id: UUID, role: string, exp: float}</code><br/>
+        - No refresh token. After 7 days, user must log in again.<br/>
+        - Token is NOT revoked on logout (client-side only). A copied token remains valid until expiry.
+      </div>
+    </div>
+
+    <!-- 7. LOGOUT FLOW -->
+    <div class="section" id="s7">
+      <h2><span class="num">7</span> Logout Flow</h2>
+      <p class="subtitle">Client-side session teardown (no server-side revocation)</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+    A["User clicks Logout<br/>icon in sidebar footer"] --> B["localStorage.removeItem<br/>('token')"]
+    B --> C["setToken(null)"]
+    C --> D["setUser(null)"]
+    D --> E["setEmployers([])"]
+    E --> F["setSelectedEmployer(null)"]
+    F --> G["navigate('/login')<br/>via useNavigate()"]
+
+    style A fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style G fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+        </div>
+      </div>
+      <div class="warn-box">
+        <strong>Security Note:</strong> Logout is entirely client-side. The JWT is NOT invalidated on the backend. If an attacker has a copy of the token, it remains usable until the 7-day expiry. For higher security, consider implementing a token blacklist or short-lived tokens + refresh tokens.
+      </div>
+    </div>
+
+    <!-- 8. POST-AUTH ROUTING & ROLE DIFFERENCES -->
+    <div class="section" id="s8">
+      <h2><span class="num">8</span> Post-Authentication Routing &amp; Role Differences</h2>
+      <p class="subtitle">Complete routing map based on user role and data state</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    AUTH["Authenticated user<br/>lands on '/'"] --> ROLE{User role?}
+
+    ROLE -->|Employer| EMP_EMP{Has employers?}
+    ROLE -->|Actuary| ACT_DASH["Actuary Dashboard<br/>Shows: pending, in-review,<br/>completed certifications"]
+
+    EMP_EMP -->|Yes| EMP_DASH["Employer Dashboard<br/>Shows: workforce summary,<br/>compliance status,<br/>risk alerts, quick actions,<br/>WORKFLOW CTA"]
+    EMP_EMP -->|No| SETUP["'Set Up Your Organization'<br/>centered card with<br/>'Add Employer' button"]
+
+    SETUP -->|Creates employer| EMP_DASH
+
+    subgraph "Employer Navigation (10 items)"
+        EN1["Dashboard /"]
+        EN2["Compliance Workflow /workflow"]
+        EN3["Employees /employees"]
+        EN4["ALE Calculator /ale"]
+        EN5["MEC Checker /mec"]
+        EN6["MV Calculator /mv"]
+        EN7["Affordability /affordability"]
+        EN8["Plans /plans"]
+        EN9["Certifications /certifications"]
+        EN10["Actuary Market /marketplace"]
+    end
+
+    subgraph "Actuary Navigation (2 items)"
+        AN1["Dashboard /"]
+        AN2["Certifications /certifications"]
+    end
+
+    EMP_DASH --> EN1
+    ACT_DASH --> AN1
+
+    style AUTH fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style EMP_DASH fill:#059669,color:#fff,stroke:none
+    style ACT_DASH fill:#059669,color:#fff,stroke:none
+    style SETUP fill:#fbbf24,color:#0f172a,stroke:none
+        </div>
+      </div>
+
+      <h3 class="sub">Unknown Route Behavior</h3>
+      <div class="warn-box">
+        <strong>No 404 handler:</strong> There is no catch-all route defined. If an authenticated user navigates to an unknown path like <code>/settings</code> or <code>/unknown</code>, the <code>DashboardLayout</code> renders with an empty content area (no error page). If unauthenticated, the <code>ProtectedRoute</code> redirects to <code>/login</code>.
+      </div>
+    </div>
+
+    <!-- 9. MULTI-EMPLOYER SWITCHING -->
+    <div class="section" id="s9">
+      <h2><span class="num">9</span> Multi-Employer Switching</h2>
+      <p class="subtitle">How employer users switch between organizations</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    SIDEBAR["Sidebar: ORGANIZATION section<br/>Shows dropdown selector"] --> SELECT{User action}
+
+    SELECT -->|"Change dropdown value"| SWITCH["setSelectedEmployer(newEmployer)<br/>from employers array"]
+    SELECT -->|"'+ Add another' link"| ADD["Opens employer creation dialog<br/>(sidebar form variant)"]
+
+    SWITCH --> RELOAD["All page components<br/>re-fetch data for<br/>new employer_id"]
+
+    ADD --> CREATE["POST /api/employers<br/>New employer created"]
+    CREATE --> APPEND["Added to employers list<br/>Auto-selected if first"]
+
+    RELOAD --> PAGES["Dashboard, Workflow,<br/>Employees, ALE, MEC,<br/>MV, Plans, etc.<br/>all use selectedEmployer.id"]
+
+    style SIDEBAR fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style RELOAD fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+      <div class="note-box">
+        <strong>Details:</strong><br/>
+        - Employer selector only visible for <code>employer</code> role users<br/>
+        - Selector is hidden when sidebar is collapsed<br/>
+        - On login, the first employer in the list is auto-selected (<code>if (res.data.length > 0 && !selectedEmployer)</code>)<br/>
+        - Switching employers does NOT navigate - user stays on current page, but data refreshes via <code>useEffect</code> dependencies<br/>
+        - Actuaries do NOT see the employer selector
+      </div>
+    </div>
+
+    <!-- 10. ERROR SCENARIOS REFERENCE -->
+    <div class="section" id="s10">
+      <h2><span class="num">10</span> Complete Error Scenarios Reference</h2>
+      <p class="subtitle">Every error the user can encounter during authentication and onboarding</p>
+      <table class="ref">
+        <thead>
+          <tr><th>Scenario</th><th>Trigger</th><th>HTTP</th><th>Error Message</th><th>UI Behavior</th><th>Layer</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Wrong email (login)</strong></td>
+            <td>Email not found in DB</td>
+            <td><span class="code code-red">401</span></td>
+            <td>"Invalid credentials"</td>
+            <td>Toast error. Form stays filled.</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Wrong password (login)</strong></td>
+            <td>bcrypt mismatch</td>
+            <td><span class="code code-red">401</span></td>
+            <td>"Invalid credentials"</td>
+            <td>Same message as wrong email (prevents email enumeration).</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Empty fields (login)</strong></td>
+            <td>User submits empty email/password</td>
+            <td><span class="code code-red">401</span></td>
+            <td>"Invalid credentials"</td>
+            <td>No frontend check. API called with empty strings. Backend finds no user.</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Invalid email format (login)</strong></td>
+            <td>Email without @ symbol etc</td>
+            <td><span class="code">N/A</span></td>
+            <td>Browser native tooltip</td>
+            <td>HTML5 <code>type="email"</code> validation prevents form submission.</td>
+            <td><span class="tag tag-browser">Browser</span></td>
+          </tr>
+          <tr>
+            <td><strong>Duplicate email (register)</strong></td>
+            <td>Email already in DB</td>
+            <td><span class="code code-red">400</span></td>
+            <td>"Email already registered"</td>
+            <td>Toast error. User must change email.</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Missing required fields (register)</strong></td>
+            <td>Name, email, or password empty</td>
+            <td><span class="code">N/A</span></td>
+            <td>"Please fill all required fields"</td>
+            <td>Client-side check. API NOT called. No loading state set.</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Invalid email format (register)</strong></td>
+            <td>Email without @ symbol</td>
+            <td><span class="code">N/A</span></td>
+            <td>Browser native tooltip</td>
+            <td>HTML5 validation blocks form submit. Frontend check passed (non-empty) but browser blocks.</td>
+            <td><span class="tag tag-browser">Browser</span></td>
+          </tr>
+          <tr>
+            <td><strong>Malformed payload</strong></td>
+            <td>Invalid JSON or missing Pydantic fields</td>
+            <td><span class="code code-red">422</span></td>
+            <td>"Login failed" / "Registration failed"</td>
+            <td>Generic toast. Unlikely via UI.</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Token expired</strong></td>
+            <td>JWT past 7-day expiry on /auth/me</td>
+            <td><span class="code code-red">401</span></td>
+            <td>"Token expired"</td>
+            <td>Silent redirect to /login. Token cleared. No error toast.</td>
+            <td><span class="tag tag-both">Both</span></td>
+          </tr>
+          <tr>
+            <td><strong>Token tampered / invalid</strong></td>
+            <td>JWT signature mismatch</td>
+            <td><span class="code code-red">401</span></td>
+            <td>"Invalid token"</td>
+            <td>Silent redirect to /login. Token cleared.</td>
+            <td><span class="tag tag-both">Both</span></td>
+          </tr>
+          <tr>
+            <td><strong>User deleted (valid token)</strong></td>
+            <td>User removed from DB, token still valid</td>
+            <td><span class="code code-red">401</span></td>
+            <td>"User not found"</td>
+            <td>Silent redirect to /login. Token cleared.</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Network error</strong></td>
+            <td>API unreachable, timeout, CORS</td>
+            <td><span class="code">N/A</span></td>
+            <td>"Login failed" / "Registration failed"</td>
+            <td>Generic toast. Form stays filled.</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Server error</strong></td>
+            <td>DB down, unhandled exception</td>
+            <td><span class="code code-red">500</span></td>
+            <td>"Login failed" / "Registration failed"</td>
+            <td>Generic toast. Form stays filled.</td>
+            <td><span class="tag tag-be">Backend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Unauthenticated route access</strong></td>
+            <td>No token, visit /, /workflow, etc.</td>
+            <td><span class="code">N/A</span></td>
+            <td>None</td>
+            <td>Auto-redirect to /login via ProtectedRoute.</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Authenticated user visits /login</strong></td>
+            <td>Already logged in</td>
+            <td><span class="code">N/A</span></td>
+            <td>None</td>
+            <td>Auto-redirect to / (prevents re-login).</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Unknown route (authenticated)</strong></td>
+            <td>Visit /settings, /foo, etc.</td>
+            <td><span class="code">N/A</span></td>
+            <td>None</td>
+            <td>DashboardLayout renders with empty content area. No 404 page.</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Employer fetch failure</strong></td>
+            <td>GET /api/employers fails after login</td>
+            <td><span class="code code-red">Any</span></td>
+            <td>None (logged to console)</td>
+            <td>Silent failure. User sees empty employer list. Can still create employer.</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+          <tr>
+            <td><strong>Employer creation failure</strong></td>
+            <td>POST /api/employers fails</td>
+            <td><span class="code code-red">Any</span></td>
+            <td>"Failed to create employer" / "Failed to create"</td>
+            <td>Toast error. Dialog stays open.</td>
+            <td><span class="tag tag-both">Both</span></td>
+          </tr>
+          <tr>
+            <td><strong>Empty company name (employer creation)</strong></td>
+            <td>User submits without company name</td>
+            <td><span class="code">N/A</span></td>
+            <td>"Company name required" / "Company name is required"</td>
+            <td>Client-side check. API NOT called.</td>
+            <td><span class="tag tag-fe">Frontend</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 11. VALIDATION COVERAGE AUDIT -->
+    <div class="section" id="s11">
+      <h2><span class="num">11</span> Validation Coverage Audit</h2>
+      <p class="subtitle">What IS and IS NOT validated at each layer</p>
+
+      <h3 class="sub">Sign In Form</h3>
+      <table class="ref">
+        <thead><tr><th>Check</th><th>Frontend</th><th>Browser HTML5</th><th>Backend</th></tr></thead>
+        <tbody>
+          <tr><td>Email not empty</td><td><span class="tag tag-gap">Not checked</span></td><td><span class="tag tag-gap">Not checked</span></td><td>Returns 401 (no user found)</td></tr>
+          <tr><td>Email format valid</td><td><span class="tag tag-gap">Not checked</span></td><td><span class="tag tag-browser">type="email"</span></td><td>N/A (lookup by string)</td></tr>
+          <tr><td>Password not empty</td><td><span class="tag tag-gap">Not checked</span></td><td><span class="tag tag-gap">Not checked</span></td><td>Returns 401 (bcrypt fails)</td></tr>
+          <tr><td>Email exists in DB</td><td>-</td><td>-</td><td>Checked (401 if not)</td></tr>
+          <tr><td>Password matches hash</td><td>-</td><td>-</td><td>bcrypt.checkpw()</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Registration Form</h3>
+      <table class="ref">
+        <thead><tr><th>Check</th><th>Frontend</th><th>Browser HTML5</th><th>Backend</th></tr></thead>
+        <tbody>
+          <tr><td>Name not empty</td><td>Checked (toast error)</td><td>-</td><td>Pydantic required</td></tr>
+          <tr><td>Email not empty</td><td>Checked (toast error)</td><td>-</td><td>Pydantic required</td></tr>
+          <tr><td>Email format valid</td><td><span class="tag tag-gap">Not checked</span></td><td><span class="tag tag-browser">type="email"</span></td><td>N/A (stored as-is)</td></tr>
+          <tr><td>Email unique</td><td>-</td><td>-</td><td>DB lookup (400 if dup)</td></tr>
+          <tr><td>Password not empty</td><td>Checked (toast error)</td><td>-</td><td>Pydantic required</td></tr>
+          <tr><td>Password min length</td><td><span class="tag tag-gap">Not enforced</span></td><td><span class="tag tag-gap">Not enforced</span></td><td><span class="tag tag-gap">Not enforced</span></td></tr>
+          <tr><td>Password complexity</td><td><span class="tag tag-gap">Not enforced</span></td><td><span class="tag tag-gap">Not enforced</span></td><td><span class="tag tag-gap">Not enforced</span></td></tr>
+          <tr><td>Role valid value</td><td>Dropdown (can't enter free text)</td><td>-</td><td><span class="tag tag-gap">Accepts any string</span></td></tr>
+          <tr><td>Email case sensitivity</td><td><span class="tag tag-gap">Not normalized</span></td><td>-</td><td><span class="tag tag-gap">Case-sensitive lookup</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 12. KNOWN GAPS -->
+    <div class="section" id="s12">
+      <h2><span class="num">12</span> Known Gaps &amp; Missing Features</h2>
+      <p class="subtitle">Features that do NOT exist in the current implementation</p>
+
+      <ul class="checklist">
+        <li class="missing"><strong>No "Forgot Password" flow</strong> - No password reset mechanism. If a user forgets their password, there is no recovery path.</li>
+        <li class="missing"><strong>No email verification</strong> - Registration is instant. Email is not verified. Users can register with non-existent emails.</li>
+        <li class="missing"><strong>No password strength enforcement</strong> - Placeholder says "Min 6 characters" but passwords of any length (even 1 character) are accepted by both frontend and backend.</li>
+        <li class="missing"><strong>No password complexity rules</strong> - No requirements for uppercase, lowercase, numbers, or special characters.</li>
+        <li class="missing"><strong>No rate limiting on auth endpoints</strong> - Login and register endpoints have no rate limiting. Vulnerable to brute-force attacks.</li>
+        <li class="missing"><strong>No account lockout</strong> - No lockout after repeated failed login attempts.</li>
+        <li class="missing"><strong>No server-side token revocation</strong> - Logout only clears client state. Token remains valid server-side until expiry.</li>
+        <li class="missing"><strong>No refresh token</strong> - After 7 days, session expires with no way to extend without re-entering credentials.</li>
+        <li class="missing"><strong>No 404 page</strong> - Unknown routes show blank content area instead of a helpful error page.</li>
+        <li class="missing"><strong>No role validation on backend</strong> - The <code>role</code> field accepts any string via API (e.g., "admin", "superuser"). The UI dropdown constrains to employer/actuary.</li>
+        <li class="missing"><strong>No email case normalization</strong> - "User@Test.com" and "user@test.com" are treated as different accounts.</li>
+        <li class="missing"><strong>No session activity tracking</strong> - No last login timestamp or session activity log.</li>
+        <li class="missing"><strong>Login form has no frontend validation</strong> - Empty submissions go directly to the API.</li>
+      </ul>
+    </div>
+
+    <!-- 13. API ENDPOINTS -->
+    <div class="section" id="s13">
+      <h2><span class="num">13</span> API Endpoints Reference</h2>
+      <p class="subtitle">Auth and employer creation endpoints with request/response shapes</p>
+
+      <h3 class="sub">POST /api/auth/register</h3>
+      <table class="field-table" style="margin-bottom:24px;">
+        <thead><tr><th>Direction</th><th>Shape</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Request Body</strong></td><td><code>{ email: string, password: string, name: string, role: string, company_name?: string }</code></td></tr>
+          <tr><td><strong>Success (200)</strong></td><td><code>{ token: string, user: { id: UUID, email, name, role, company_name, created_at: ISO } }</code></td></tr>
+          <tr><td><strong>Error (400)</strong></td><td><code>{ detail: "Email already registered" }</code></td></tr>
+          <tr><td><strong>Error (422)</strong></td><td><code>{ detail: [{ loc, msg, type }] }</code> (Pydantic validation)</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">POST /api/auth/login</h3>
+      <table class="field-table" style="margin-bottom:24px;">
+        <thead><tr><th>Direction</th><th>Shape</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Request Body</strong></td><td><code>{ email: string, password: string }</code></td></tr>
+          <tr><td><strong>Success (200)</strong></td><td><code>{ token: string, user: { id, email, name, role, company_name, created_at } }</code></td></tr>
+          <tr><td><strong>Error (401)</strong></td><td><code>{ detail: "Invalid credentials" }</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">GET /api/auth/me (Token Validation)</h3>
+      <table class="field-table" style="margin-bottom:24px;">
+        <thead><tr><th>Direction</th><th>Shape</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Headers</strong></td><td><code>Authorization: Bearer &lt;JWT&gt;</code></td></tr>
+          <tr><td><strong>Success (200)</strong></td><td><code>{ id, email, name, role, company_name, created_at }</code></td></tr>
+          <tr><td><strong>Error (401)</strong></td><td><code>{ detail: "Token expired" | "Invalid token" | "User not found" }</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">POST /api/employers (Employer Creation)</h3>
+      <table class="field-table">
+        <thead><tr><th>Direction</th><th>Shape</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Headers</strong></td><td><code>Authorization: Bearer &lt;JWT&gt;</code></td></tr>
+          <tr><td><strong>Request Body</strong></td><td><code>{ name: string, ein?: string, address?: string, contact_email?: string, payroll_provider?: string, hr_system?: string, insurance_carrier?: string, employee_count?: number }</code></td></tr>
+          <tr><td><strong>Success (200)</strong></td><td><code>{ id: UUID, user_id, name, ein, address, contact_email, employee_count, payroll_provider, hr_system, insurance_carrier, created_at }</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 14. DATA MODEL -->
+    <div class="section" id="s14">
+      <h2><span class="num">14</span> Data Model: User Object</h2>
+      <p class="subtitle">Shape of the user document stored in MongoDB and returned in API responses</p>
+
+      <h3 class="sub">MongoDB Document (users collection)</h3>
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string (UUID v4)</td><td>Primary identifier. Generated server-side.</td></tr>
+          <tr><td><code>email</code></td><td>string</td><td>Login identity. Unique but not enforced via DB index.</td></tr>
+          <tr><td><code>password</code></td><td>string</td><td>bcrypt hash. Never returned in API responses.</td></tr>
+          <tr><td><code>name</code></td><td>string</td><td>Display name.</td></tr>
+          <tr><td><code>role</code></td><td>string</td><td>"employer" or "actuary". Determines UI experience.</td></tr>
+          <tr><td><code>company_name</code></td><td>string</td><td>From registration form. Empty string if not provided. NOT linked to employer entity.</td></tr>
+          <tr><td><code>created_at</code></td><td>string (ISO 8601)</td><td>UTC timestamp of account creation.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">JWT Payload</h3>
+      <table class="field-table">
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>user_id</code></td><td>string (UUID)</td><td>Maps to <code>id</code> in users collection</td></tr>
+          <tr><td><code>role</code></td><td>string</td><td>"employer" or "actuary"</td></tr>
+          <tr><td><code>exp</code></td><td>float (Unix timestamp)</td><td>Expiry time (creation + 7 days)</td></tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub">Frontend AuthContext State</h3>
+      <table class="field-table">
+        <thead><tr><th>State</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>user</code></td><td>object | null</td><td>{id, email, name, role, company_name, created_at}</td></tr>
+          <tr><td><code>token</code></td><td>string | null</td><td>JWT string from localStorage</td></tr>
+          <tr><td><code>loading</code></td><td>boolean</td><td>True during initial auth check. Blocks all rendering.</td></tr>
+          <tr><td><code>employers</code></td><td>array</td><td>List of employer objects for this user</td></tr>
+          <tr><td><code>selectedEmployer</code></td><td>object | null</td><td>Currently active employer. All pages use this.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e40af',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#94a3b8',
+        secondaryColor: '#f1f5f9',
+        tertiaryColor: '#ecfdf5',
+        fontFamily: 'Inter, -apple-system, sans-serif',
+        fontSize: '13px'
+      },
+      flowchart: {
+        curve: 'basis',
+        padding: 16,
+        nodeSpacing: 30,
+        rankSpacing: 40,
+        htmlLabels: true
+      }
+    });
+  </script>
+</body>
+</html>

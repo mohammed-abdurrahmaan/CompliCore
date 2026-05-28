@@ -1,0 +1,87 @@
+{
+  "summary": "Comprehensive testing of 3 new Plan Library features: Compliance Check popup, Assign Employees dialog, and Employee Portal filtering. All backend tests passed (15/15). All frontend UI tests passed. Features working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check returns MEC data with 7 checks",
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check returns MV percentage vs 60% threshold",
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check returns Affordability with employee count and pass rate",
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check returns overall_compliant status",
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check returns 404 for invalid plan",
+    "Backend: GET /api/enrollment/employees-list/{employer_id} returns employee list (57 employees)",
+    "Backend: GET /api/enrollment/plans/{plan_id}/assigned-employees returns assignments",
+    "Backend: POST /api/enrollment/plans/{plan_id}/assign-employees assigns employees",
+    "Backend: Verify assignments persisted via GET",
+    "Backend: POST /api/enrollment/plans/{plan_id}/unassign-employees removes assignments",
+    "Backend: GET /api/enrollment/assignments/{employer_id} returns all assignments",
+    "Backend: POST assign-employees with empty list returns 400",
+    "Backend: GET /api/enrollment/employee/my-plans returns plans",
+    "Backend: Employee sees assigned plans only when assignments exist",
+    "Backend: GET /api/enrollment/plans/{employer_id} returns plans",
+    "Frontend: Plan Library page loads with Check and Assign buttons on each plan card (9 plans)",
+    "Frontend: Compliance Check dialog opens with MEC, MV, Affordability sections",
+    "Frontend: Compliance Check shows 7 MEC checks all passing",
+    "Frontend: Compliance Check shows MV 62% vs 60% threshold (Pass)",
+    "Frontend: Compliance Check shows Affordability 57 employees checked, 100% pass rate",
+    "Frontend: Compliance Check shows 3 Pass badges",
+    "Frontend: Assign Employees dialog opens with search input, Select All button, Save button",
+    "Frontend: Assign Employees shows 57 employee rows with Department, Type, Hours/Week columns",
+    "Frontend: Search filter works (searching 'Maria' shows 1 row)",
+    "Frontend: Select All/Deselect All toggles work",
+    "Frontend: Selecting employees and saving assignments works",
+    "Frontend: Assignment count badge appears on plan card after saving (e.g., '3 assigned')",
+    "Frontend: Employee Portal (Maria) shows enrolled plan correctly",
+    "Frontend: Employee Portal (Alex) shows all 5 medical plans (no specific assignments)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_plan_library_features.py",
+    "/app/test_reports/pytest/plan_library_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_plan_library_features.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (all UI components and flows working)"
+  },
+  "test_credentials": {
+    "employer": {"email": "test@demo.com", "password": "test123", "role": "employer", "employer_id": "afeaea3f-0ada-45cf-b29f-f7c06fa512b9"},
+    "employee_enrolled": {"email": "maria@test.com", "password": "test123", "role": "employee"},
+    "employee_new": {"email": "alex.t@test.com", "password": "test123", "role": "employee"}
+  },
+  "seed_data_creation": "Used existing test data. Created plan assignments during testing.",
+  "mocked_apis": {
+    "has_mocked_apis": false
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Plan Library features fully tested. Compliance Check popup shows MEC (7 checks), MV (percentage vs 60%), Affordability (employee count, pass rate). Assign Employees dialog shows employee list with search, Select All, checkboxes, department/type/hours columns. Assignment count badges appear on plan cards. Employee Portal prioritizes plan_assignments over eligibility_results - if assignments exist, only those plans show; otherwise falls back to all eligible plans. Key data-testids: compliance-dialog, mec-check-result, mv-check-result, affordability-check-result, status-pass, status-fail, assign-dialog, assign-search-input, assign-toggle-all, save-assignments-btn, assign-row-{id}, compliance-check-{id}, assign-employees-{id}, assignment-count-{id}.",
+  "ui_verification": {
+    "compliance_check_dialog": {
+      "overall_status": "ACA Compliant banner with checkmark",
+      "mec_section": "7 checks: Is Group Health Plan, Covers Essential Benefits, Covers Preventive Care, No Annual Limits, No Lifetime Limits, Covers Dependents To 26, No Preexisting Exclusions - all with checkmarks",
+      "mv_section": "Plan MV Percentage 62%, Required Threshold 60%, Actuarial Certification Certified, Method HHS Calculator, progress bar",
+      "affordability_section": "Employee Monthly Cost $100, Safe Harbor Method W-2 Safe Harbor, Threshold 9.02% of W-2, Employees Checked 57, Affordable For 57, Unaffordable For 0, Pass Rate 100%"
+    },
+    "assign_employees_dialog": {
+      "header": "Assign Employees - Select employees to offer {plan_name} ({carrier})",
+      "search": "Search by name, email, or department...",
+      "toggle_all": "Select All / Deselect All button",
+      "selection_count": "X of 57 selected (Y to add/remove)",
+      "table_columns": "Employee (name, email), Department, Type (badge), Hours/Week",
+      "save_button": "Save Assignments (X)"
+    },
+    "plan_card_badges": {
+      "assignment_count": "Purple badge with Users icon showing 'X assigned'"
+    }
+  }
+}

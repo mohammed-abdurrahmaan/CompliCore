@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompliCore - ALE Determination User Journey</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #1e40af;
+      --success: #059669;
+      --error: #dc2626;
+      --warning: #d97706;
+      --accent-bg: #eff6ff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .header {
+      text-align: center; margin-bottom: 48px; padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header .badge {
+      display: inline-block; background: var(--accent-bg); color: var(--primary);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .header p { color: var(--muted); font-size: 15px; max-width: 640px; margin: 0 auto; }
+    .meta-row {
+      display: flex; justify-content: center; gap: 32px; margin-top: 16px;
+      font-size: 13px; color: var(--muted); flex-wrap: wrap;
+    }
+    .meta-row strong { color: var(--text); }
+    .section {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px; margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 20px; font-weight: 700; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section h2 .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--primary); color: #fff;
+      font-size: 13px; font-weight: 700; border-radius: 8px; flex-shrink: 0;
+    }
+    .section .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .mermaid-wrap {
+      background: #fafbfc; border: 1px solid var(--border); border-radius: 8px;
+      padding: 24px 16px; overflow-x: auto; margin-bottom: 20px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .note-box {
+      background: var(--accent-bg); border-left: 3px solid var(--primary);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .note-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .warn-box {
+      background: #fffbeb; border-left: 3px solid var(--warning);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .warn-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--warning); }
+    .gap-box {
+      background: #fef2f2; border-left: 3px solid var(--error);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .gap-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--error); }
+    .success-box {
+      background: #ecfdf5; border-left: 3px solid var(--success);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px;
+    }
+    .success-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); }
+    table.ref {
+      width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px;
+    }
+    table.ref th {
+      background: #f1f5f9; text-align: left; padding: 10px 14px;
+      font-weight: 700; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border);
+    }
+    table.ref td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table.ref tr:last-child td { border-bottom: none; }
+    h3.sub { font-size: 15px; margin-top: 24px; margin-bottom: 8px; font-weight: 700; }
+    .toc {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px 32px; margin-bottom: 24px;
+    }
+    .toc h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+    .toc ol { padding-left: 20px; }
+    .toc li { font-size: 13px; padding: 3px 0; }
+    .toc a { color: var(--primary); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .callout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+    .callout-card {
+      padding: 16px; border-radius: 8px; border: 1px solid var(--border);
+    }
+    .callout-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .callout-card p { font-size: 12px; color: var(--muted); }
+    .callout-card .big { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .step-explain { margin-top: 20px; }
+    .step-explain .step-item {
+      padding: 16px 20px; border-left: 3px solid var(--border); margin-bottom: 16px; margin-left: 4px;
+    }
+    .step-explain .step-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .step-explain .step-item p { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+    .step-explain .step-item .insight {
+      font-size: 12px; color: var(--primary); font-weight: 600; margin-top: 6px;
+    }
+    .step-explain .step-item.active { border-left-color: var(--primary); }
+    .step-explain .step-item.decision { border-left-color: var(--warning); }
+    .step-explain .step-item.error { border-left-color: var(--error); }
+    .step-explain .step-item.success { border-left-color: var(--success); }
+    @media print {
+      body { background: #fff; }
+      .container { padding: 20px; }
+      .section { break-inside: avoid; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="badge">User Journey Flowchart</div>
+      <h1>ALE Determination</h1>
+      <p>End-to-end workflow for determining Applicable Large Employer status under IRC Section 4980H, including controlled group aggregation, data validation, monthly calculations, seasonal worker exception, and downstream compliance triggers</p>
+      <div class="meta-row">
+        <span><strong>IRS Reference:</strong> IRC Section 4980H</span>
+        <span><strong>Threshold:</strong> 50 Full-Time Equivalent Employees</span>
+        <span><strong>Measurement:</strong> Prior Calendar Year (12-Month Average)</span>
+        <span><strong>Controlled Group:</strong> IRC Section 414(b)(c)(m)(o)</span>
+        <span><strong>Seasonal Exception:</strong> 120 Days Rule</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <h3>Table of Contents</h3>
+      <ol>
+        <li><a href="#s1">Complete End-to-End Flowchart</a></li>
+        <li><a href="#s2">Step-by-Step User Journey Explanation</a></li>
+        <li><a href="#s3">Controlled Group Analysis</a></li>
+        <li><a href="#s4">Monthly Calculation Deep Dive</a></li>
+        <li><a href="#s5">The 12-Month Average &amp; ALE Decision</a></li>
+        <li><a href="#s6">Seasonal Worker Exception</a></li>
+        <li><a href="#s7">ALE Outcomes &amp; Downstream Triggers</a></li>
+        <li><a href="#s8">Error Handling &amp; Data Validation</a></li>
+        <li><a href="#s9">ALE Dashboard Summary Display</a></li>
+        <li><a href="#s10">Key Numbers &amp; Thresholds Reference</a></li>
+      </ol>
+    </div>
+
+    <!-- 1. COMPLETE FLOWCHART -->
+    <div class="section" id="s1">
+      <h2><span class="num">1</span> Complete End-to-End Flowchart</h2>
+      <p class="subtitle">The full workflow from login to ALE determination and downstream compliance triggers</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    START((User logs<br/>into system)) --> NAV["Navigate to<br/>ALE Determination Module"]
+
+    NAV --> CTRL_GROUP["Controlled Group Check:<br/>Does this employer belong to<br/>a controlled group?"]
+
+    CTRL_GROUP --> CTRL_Q{Is employer part of<br/>a controlled group?<br/>parent-subsidiary or<br/>brother-sister with<br/>80%+ common ownership}
+
+    CTRL_Q -->|"YES"| AGGREGATE_COMPANIES["Aggregate ALL employees<br/>across all related companies<br/>in the controlled group<br/>(treated as single employer)"]
+    CTRL_Q -->|"NO - standalone company"| SELECT_YEAR
+
+    AGGREGATE_COMPANIES --> SELECT_YEAR["Select Measurement Year<br/>(e.g., 2025)"]
+
+    SELECT_YEAR --> FETCH["System fetches employee data<br/>for the selected year<br/>(from payroll integration)"]
+
+    FETCH --> VALIDATE["Validate Employee<br/>Data Completeness"]
+
+    VALIDATE --> DATA_OK{Is data<br/>complete?}
+
+    DATA_OK -->|NO| SHOW_ERRORS["Show specific errors:<br/>- Missing employee hours<br/>- Incorrect classifications<br/>- Incomplete monthly data<br/>- Missing records"]
+    SHOW_ERRORS --> PROMPT["Prompt user to fix data<br/>Highlight exact issues<br/>Guide to resolution"]
+    PROMPT --> VALIDATE
+
+    DATA_OK -->|YES| TRICARE["Identify &amp; Exclude Veterans<br/>with TRICARE Coverage"]
+
+    TRICARE --> TRICARE_CHECK["System flags employees<br/>covered under TRICARE<br/>(military healthcare program)"]
+
+    TRICARE_CHECK --> TRICARE_EXCLUDE["Exclude TRICARE-covered<br/>veterans from FTE count<br/>Log excluded employees<br/>with reason"]
+
+    TRICARE_EXCLUDE --> CALC_HOURS["Calculate Monthly<br/>Employee Hours<br/>(for each of 12 months,<br/>excluding TRICARE veterans)"]
+
+    CALC_HOURS --> CLASSIFY["For each employee, each month:<br/>- 130+ hrs/month = Full-Time<br/>- Under 130 hrs = Part-Time"]
+
+    CLASSIFY --> CONVERT_FTE["Convert Part-Time Hours<br/>to FTE Equivalents<br/>(total PT hours / 120)"]
+
+    CONVERT_FTE --> AGGREGATE["Aggregate Monthly Counts:<br/>- Full-Time Employees<br/>- FTE Equivalents<br/>- Total Workforce Count"]
+
+    AGGREGATE --> REPEAT{All 12 months<br/>calculated?}
+    REPEAT -->|"NO - more months remaining"| CALC_HOURS
+    REPEAT -->|"YES - all 12 complete"| AVG["Calculate 12-Month Average<br/>(sum of all monthly totals / 12)"]
+
+    AVG --> THRESHOLD{Is 12-month<br/>average >= 50?}
+
+    THRESHOLD -->|"NO (below 50)"| NOT_ALE_DIRECT["NOT AN ALE<br/>Employer mandate<br/>does not apply"]
+    NOT_ALE_DIRECT --> SHOW_NOT["Display result:<br/>Not an ALE<br/>Show monthly breakdown"]
+    SHOW_NOT --> END_NOT((END))
+
+    THRESHOLD -->|"YES (50 or above)"| SEASONAL["Check Seasonal<br/>Worker Exception"]
+
+    SEASONAL --> SEASONAL_Q{Did seasonal workers<br/>cause the count<br/>to exceed 50?<br/>AND were they employed<br/>for 120 days or fewer?}
+
+    SEASONAL_Q -->|"YES - seasonal exception applies"| NOT_ALE_SEASONAL["NOT AN ALE<br/>(Seasonal Worker<br/>Exception applies)"]
+    NOT_ALE_SEASONAL --> SHOW_SEASONAL["Display result:<br/>Not an ALE<br/>Seasonal exception noted"]
+    SHOW_SEASONAL --> END_SEASONAL((END))
+
+    SEASONAL_Q -->|"NO - exception does not apply"| MARK_ALE["Mark Employer as ALE<br/>in the system"]
+
+    MARK_ALE --> STORE["Store ALE Status<br/>Record calculation details<br/>Log monthly breakdowns"]
+
+    STORE --> TRIGGER["Trigger Downstream Modules:"]
+    TRIGGER --> T1["MEC Validation<br/>(coverage offered to 95%+ FT?)"]
+    TRIGGER --> T2["Affordability Analysis<br/>(premium <= 9.02% of income?)"]
+    TRIGGER --> T3["IRS Reporting<br/>(1094-C / 1095-C forms)"]
+
+    STORE --> DASHBOARD["Display ALE<br/>Dashboard Summary"]
+    DASHBOARD --> END_ALE((END))
+
+    style START fill:#1e40af,color:#fff,stroke:none
+    style NOT_ALE_DIRECT fill:#059669,color:#fff,stroke:none
+    style NOT_ALE_SEASONAL fill:#059669,color:#fff,stroke:none
+    style MARK_ALE fill:#d97706,color:#fff,stroke:none
+    style SHOW_ERRORS fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style PROMPT fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style TRICARE fill:#7c3aed,color:#fff,stroke:none
+    style TRICARE_CHECK fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style TRICARE_EXCLUDE fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style END_NOT fill:#059669,color:#fff,stroke:none
+    style END_SEASONAL fill:#059669,color:#fff,stroke:none
+    style END_ALE fill:#d97706,color:#fff,stroke:none
+    style AVG fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style STORE fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style T1 fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style T2 fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style T3 fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style DASHBOARD fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style CTRL_GROUP fill:#0d9488,color:#fff,stroke:none
+    style CTRL_Q fill:#ccfbf1,color:#134e4a,stroke:#5eead4
+    style AGGREGATE_COMPANIES fill:#ccfbf1,color:#134e4a,stroke:#5eead4
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. STEP-BY-STEP EXPLANATION -->
+    <div class="section" id="s2">
+      <h2><span class="num">2</span> Step-by-Step User Journey Explanation</h2>
+      <p class="subtitle">Plain-language walkthrough of every step in the workflow</p>
+
+      <div class="step-explain">
+
+        <div class="step-item active">
+          <h4>Step 1: Entry into ALE Module</h4>
+          <p>The user (typically an employer admin or compliance officer) logs into the system and navigates to the ALE Determination module.</p>
+          <div class="insight">At this stage, the system is preparing to evaluate whether the organization qualifies as an Applicable Large Employer (ALE) under ACA rules.</div>
+        </div>
+
+        <div class="step-item" style="border-left-color: #0d9488;">
+          <h4>Step 2: Controlled Group Check</h4>
+          <p>Before anything else, the system checks: <strong>does this employer belong to a controlled group?</strong></p>
+          <p>A controlled group exists when multiple businesses share common ownership:</p>
+          <p>- <strong>Parent-Subsidiary:</strong> A parent company owns 80%+ of a subsidiary's stock<br/>
+             - <strong>Brother-Sister:</strong> The same 5 or fewer people own 80%+ of two or more companies<br/>
+             - <strong>Combined Group:</strong> A mix of both parent-subsidiary and brother-sister relationships</p>
+          <p><strong>If the employer IS part of a controlled group:</strong> The system aggregates ALL employees across ALL related companies in the group. They are treated as a single employer for ALE purposes.</p>
+          <p><strong>If standalone:</strong> Only this company's employees are counted.</p>
+          <div class="insight">This is critical. A small company with just 20 employees might think it's safe from ALE status. But if its parent company has 35 employees, the combined total is 55 — making the entire group an ALE. Every company in the controlled group shares the same ALE status.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 3: Selection of Measurement Year</h4>
+          <p>The user selects a specific year to evaluate (e.g., 2025). This is the year whose workforce data will be analyzed.</p>
+          <div class="insight">ALE status is determined based on the <strong>previous calendar year's</strong> workforce data. So to know your ALE status for 2026, you measure 2025.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 4: Data Retrieval</h4>
+          <p>The system pulls data for the selected year from the connected payroll system:</p>
+          <p>- Employee records (names, departments, employment types)<br/>
+             - Hours worked per month (for each employee, each month)<br/>
+             - Employment classifications (full-time, part-time, seasonal)</p>
+          <div class="insight">This data comes from payroll/HR integrations (ADP, Gusto, Paychex, etc.). The system fetches it automatically — no manual data entry needed. If the employer is part of a controlled group, data is pulled from ALL member companies.</div>
+        </div>
+
+        <div class="step-item error">
+          <h4>Step 5: Data Validation</h4>
+          <p>Before any calculations begin, the system checks every record for completeness:</p>
+          <p>- Are there employees with missing monthly hours?<br/>
+             - Are there months with no data at all?<br/>
+             - Are employment classifications present and correct?<br/>
+             - Are there any obvious anomalies (e.g., 500 hours in one month)?</p>
+          <p><strong>If issues are found:</strong> The system stops, shows clear error messages identifying the exact problems, and prevents calculation until the data is corrected. The user fixes the issues and validation runs again.</p>
+          <div class="insight">This gatekeeping ensures accuracy before any compliance decisions are made. You cannot get an incorrect ALE result due to bad data - the system won't let you proceed.</div>
+        </div>
+
+        <div class="step-item" style="border-left-color: #7c3aed;">
+          <h4>Step 6: TRICARE Veteran Exclusion</h4>
+          <p>Before any FTE calculations begin, the system identifies employees who are covered under <strong>TRICARE</strong> — the healthcare program for U.S. military service members, retirees, and their dependents.</p>
+          <p>These employees are <strong>excluded from the ALE headcount</strong> entirely. They are:</p>
+          <p>- Removed from the full-time employee count<br/>
+             - Removed from the part-time hours pool<br/>
+             - Not factored into FTE equivalents<br/>
+             - Logged separately with "TRICARE exclusion" as the reason</p>
+          <div class="insight">TRICARE-covered veterans already have government-provided healthcare and are not part of the employer's ACA coverage obligation. Excluding them can meaningfully reduce the FTE count — potentially enough to drop below the 50-employee ALE threshold.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 7: Monthly Hours Calculation</h4>
+          <p>For each <strong>non-excluded</strong> employee, for each month of the selected year, the system calculates total hours worked and classifies them:</p>
+          <p>- <strong>Full-Time:</strong> 130 or more hours in the month<br/>
+             - <strong>Part-Time:</strong> Less than 130 hours in the month</p>
+          <div class="insight">An employee's status can change month to month. Someone might be full-time in January (135 hrs) but part-time in February (100 hrs). The system tracks this per month, not as a yearly label.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 8: Conversion to FTE Equivalents</h4>
+          <p>Part-time employees don't count individually. Instead, their hours are pooled and converted:</p>
+          <p><strong>Total part-time hours for the month / 120 = FTE equivalents</strong></p>
+          <p>Example: 2 employees each working 65 hours = 130 total hours / 120 = 1.08 FTEs</p>
+          <div class="insight">The divisor is 120 (not 130). This is a specific IRS formula - 120 hours represents one full-time equivalent for the FTE pooling calculation.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 9: Monthly Aggregation</h4>
+          <p>For each month, the system produces three numbers:</p>
+          <p>- <strong>Full-time employee count</strong> (each person who worked 130+ hours)<br/>
+             - <strong>FTE equivalents</strong> (from the part-time conversion above)<br/>
+             - <strong>Total workforce count</strong> = Full-time + FTE equivalents</p>
+          <div class="insight">This gives 12 separate workforce snapshots - one for each month of the year.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 10: The 12-Month Average</h4>
+          <p>The system takes the total workforce count from all 12 months, adds them together, and divides by 12.</p>
+          <p>Example: If the monthly totals are 48, 49, 51, 52, 50, 47, 48, 55, 53, 50, 49, 48 → Sum = 600 → Average = 50.0</p>
+          <div class="insight">This is the single most important number in the entire process. It's the 12-month average that determines ALE status, not any single month's count.</div>
+        </div>
+
+        <div class="step-item decision">
+          <h4>Step 11: ALE Threshold Check</h4>
+          <p>The critical decision point:</p>
+          <p>- <strong>Average >= 50:</strong> Potential ALE. But there's one more check (seasonal workers).<br/>
+             - <strong>Average < 50:</strong> Definitively NOT an ALE. The employer mandate does not apply. Workflow ends here.</p>
+          <div class="insight">If the average is exactly 50 (not 49.9, not 50.1, but exactly 50.0), the employer IS a potential ALE. The threshold is "50 or more."</div>
+        </div>
+
+        <div class="step-item decision">
+          <h4>Step 12: Seasonal Worker Exception</h4>
+          <p>Even if the 12-month average is 50 or above, the system checks one final escape route:</p>
+          <p><strong>Were the excess employees (above 50) seasonal workers employed for 120 days or fewer?</strong></p>
+          <p>- <strong>YES:</strong> The employer is NOT an ALE. The seasonal worker exception applies. The excess was temporary and doesn't count.<br/>
+             - <strong>NO:</strong> The employer IS an ALE. The excess was from regular (non-seasonal) employees.</p>
+          <div class="insight">This exception exists because some industries (agriculture, retail, tourism) have predictable seasonal spikes. The IRS doesn't penalize employers for temporary, seasonal workforce increases.</div>
+        </div>
+
+        <div class="step-item success">
+          <h4>Step 13: ALE Status Assignment &amp; Storage</h4>
+          <p>If the employer meets the criteria (average >= 50, no seasonal exception), they are officially marked as an ALE in the system.</p>
+          <p>The system stores: ALE status, the year it applies to, the 12-month average, and all monthly calculation details for audit purposes.</p>
+          <div class="insight">This stored status is used across every other compliance module. MEC checks, affordability tests, and IRS reporting all reference this ALE determination.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 14: Downstream Module Triggers</h4>
+          <p>Once marked as ALE, the system automatically flags the next compliance steps:</p>
+          <p>- <strong>MEC Validation:</strong> Is the employer offering coverage to 95%+ of full-time employees?<br/>
+             - <strong>Affordability Analysis:</strong> Is the employee's share of premium below 9.02% of income?<br/>
+             - <strong>IRS Reporting:</strong> Generate data for Form 1094-C (transmittal) and Form 1095-C (per employee)</p>
+          <div class="insight">These modules cannot run meaningfully without knowing ALE status first. ALE determination is the gateway to the entire compliance workflow.</div>
+        </div>
+
+        <div class="step-item active">
+          <h4>Step 15: Dashboard Display</h4>
+          <p>The user sees a summary dashboard showing:</p>
+          <p>- ALE status (Yes / No)<br/>
+             - The 12-month average number<br/>
+             - Controlled group details (if applicable — member companies, individual vs combined counts)<br/>
+             - Monthly breakdown table (FT count, FTE equivalents, total per month)<br/>
+             - TRICARE exclusions summary (count of excluded veterans)<br/>
+             - Seasonal worker analysis (if applicable)<br/>
+             - Compliance risk indicators<br/>
+             - Links to triggered downstream modules</p>
+          <div class="insight">This is the final output - a clear, auditable summary the compliance officer can review, export, or share with stakeholders.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 3. CONTROLLED GROUP ANALYSIS -->
+    <div class="section" id="s3">
+      <h2><span class="num">3</span> Controlled Group Analysis</h2>
+      <p class="subtitle">When multiple businesses under common ownership must combine their employees as one group</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    EMPLOYER["Employer enters<br/>ALE Module"] --> OWN_Q{Does this company have<br/>ownership relationships<br/>with other businesses?}
+
+    OWN_Q -->|"NO - independent company"| STANDALONE["Standalone Employer<br/>Only count this company's<br/>employees"]
+    STANDALONE --> PROCEED_SOLO["Proceed with ALE calculation<br/>using only this company's data"]
+
+    OWN_Q -->|"YES"| TYPE{What type of<br/>relationship?}
+
+    TYPE -->|"Parent-Subsidiary"| PS["Parent owns 80%+<br/>of subsidiary's stock<br/>Can be multi-level chains"]
+    TYPE -->|"Brother-Sister"| BS["Same 5 or fewer people<br/>own 80%+ of two or<br/>more companies"]
+    TYPE -->|"Combined Group"| CG["Mix of both<br/>parent-subsidiary AND<br/>brother-sister relationships"]
+
+    PS --> IDENTIFY["System identifies ALL<br/>companies in the<br/>controlled group"]
+    BS --> IDENTIFY
+    CG --> IDENTIFY
+
+    IDENTIFY --> PULL["Pull employee data from<br/>EVERY company in the group"]
+
+    PULL --> MERGE["Merge all employees<br/>into one combined roster<br/>(as if they work for<br/>one single employer)"]
+
+    MERGE --> COMBINED_COUNT["Combined employee count<br/>used for ALE threshold"]
+
+    COMBINED_COUNT --> EXAMPLE1["Example - Parent-Subsidiary:<br/>Parent Co: 25 employees<br/>Subsidiary A: 15 employees<br/>Subsidiary B: 20 employees<br/>Combined: 60 employees = ALE"]
+
+    COMBINED_COUNT --> EXAMPLE2["Example - Brother-Sister:<br/>John owns 90% of Company X (30 emp)<br/>John owns 85% of Company Y (25 emp)<br/>Combined: 55 employees = ALE<br/>(even though neither is ALE alone)"]
+
+    COMBINED_COUNT --> KEY_POINT["KEY: ALL companies in the group<br/>share the same ALE status.<br/>If the group is ALE, EVERY<br/>member company is ALE — even<br/>the one with just 5 employees"]
+
+    style EMPLOYER fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style STANDALONE fill:#059669,color:#fff,stroke:none
+    style PS fill:#ccfbf1,color:#134e4a,stroke:#5eead4
+    style BS fill:#ccfbf1,color:#134e4a,stroke:#5eead4
+    style CG fill:#ccfbf1,color:#134e4a,stroke:#5eead4
+    style MERGE fill:#0d9488,color:#fff,stroke:none
+    style EXAMPLE1 fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style EXAMPLE2 fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style KEY_POINT fill:#fffbeb,color:#92400e,stroke:#fde68a
+        </div>
+      </div>
+
+      <h3 class="sub">Three Types of Controlled Groups</h3>
+      <table class="ref">
+        <thead><tr><th>Type</th><th>Definition</th><th>Example</th><th>Ownership Threshold</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Parent-Subsidiary</strong></td>
+            <td>One company (parent) owns 80% or more of another company (subsidiary). Can chain: parent → child → grandchild.</td>
+            <td>Acme Corp owns 85% of Acme Logistics and 90% of Acme Tech. All three are one controlled group.</td>
+            <td>80% stock ownership</td>
+          </tr>
+          <tr>
+            <td><strong>Brother-Sister</strong></td>
+            <td>The same 5 or fewer individuals own 80%+ of two or more companies, with each person owning at least some stock in each.</td>
+            <td>Jane owns 80% of a restaurant and 80% of a retail store. Both are one controlled group.</td>
+            <td>80% common ownership by same 5 or fewer people</td>
+          </tr>
+          <tr>
+            <td><strong>Combined Group</strong></td>
+            <td>A group that includes both parent-subsidiary and brother-sister relationships among its members.</td>
+            <td>A parent-subsidiary chain where one of the subsidiaries also has a brother-sister relationship with another company.</td>
+            <td>Combination of both rules</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="warn-box">
+        <strong>Why This Matters — A Common Trap:</strong><br/>
+        Many business owners think each of their companies is evaluated separately. A restaurant with 20 employees seems far from the 50-employee ALE threshold. But if the same owner also runs a catering company (18 employees) and a food truck business (15 employees), the combined total is <strong>53 employees — making ALL THREE businesses ALEs</strong> that must offer health coverage.
+      </div>
+
+      <div class="note-box">
+        <strong>How the System Handles It:</strong><br/>
+        1. During onboarding, the employer declares related companies and ownership percentages<br/>
+        2. The system identifies if the 80% threshold is met for any controlled group type<br/>
+        3. Employee data is automatically pulled from all member companies' payroll systems<br/>
+        4. The merged roster is used for ALE calculation — individual company counts are also shown for reference<br/>
+        5. If the group is determined to be an ALE, the status is applied to every member company
+      </div>
+    </div>
+
+    <!-- 4. MONTHLY CALCULATION DEEP DIVE -->
+    <div class="section" id="s4">
+      <h2><span class="num">4</span> Monthly Calculation Deep Dive</h2>
+      <p class="subtitle">What the system computes for each of the 12 months</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    MONTH["Take one month<br/>(e.g., January 2025)"] --> EACH["For EACH employee<br/>in that month"]
+
+    EACH --> TRICARE_CHK{Is this employee<br/>covered under<br/>TRICARE?}
+
+    TRICARE_CHK -->|"YES"| SKIP["EXCLUDE from count<br/>Log as TRICARE veteran<br/>Skip to next employee"]
+    TRICARE_CHK -->|"NO"| HOURS["Get total hours<br/>worked that month"]
+
+    HOURS --> CLASSIFY{Hours >= 130?}
+    CLASSIFY -->|"YES"| FT["Classify as<br/>FULL-TIME<br/>for this month"]
+    CLASSIFY -->|"NO"| PT["Classify as<br/>PART-TIME<br/>for this month"]
+
+    FT --> COUNT_FT["Add to Full-Time<br/>employee count"]
+    PT --> POOL["Add hours to<br/>Part-Time pool"]
+
+    COUNT_FT --> AFTER["After all employees<br/>are processed"]
+    POOL --> AFTER
+    SKIP --> AFTER
+
+    AFTER --> FTE_CALC["Calculate FTE equivalents:<br/>Total PT hours / 120"]
+
+    FTE_CALC --> TOTAL["Month's Total:<br/>Full-Time Count + FTE Equivalents<br/>(TRICARE veterans not included)"]
+
+    TOTAL --> EXAMPLE["Example - January 2025:<br/>42 employees worked 130+ hrs = 42 FT<br/>15 employees worked total 900 PT hrs<br/>900 / 120 = 7.5 FTEs<br/>January Total = 42 + 7.5 = 49.5"]
+
+    EXAMPLE --> NEXT_MONTH["Repeat for Feb, Mar, Apr...<br/>through December"]
+
+    style MONTH fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style FT fill:#d97706,color:#fff,stroke:none
+    style PT fill:#3b82f6,color:#fff,stroke:none
+    style TOTAL fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style EXAMPLE fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style SKIP fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+        </div>
+      </div>
+
+      <h3 class="sub">Worked Example: Full 12-Month Calculation</h3>
+      <div class="note-box" style="margin-bottom:16px;">
+        <strong>TRICARE Exclusion Applied:</strong> In this example, the employer has 3 employees covered under TRICARE. These veterans are excluded from every month's calculation below. The "Full-Time Count" and "Total PT Hours" only reflect non-TRICARE employees.
+      </div>
+      <table class="ref">
+        <thead><tr><th>Month</th><th>Full-Time Count</th><th>Total PT Hours</th><th>FTE Equivalents</th><th>Monthly Total</th></tr></thead>
+        <tbody>
+          <tr><td>January</td><td>42</td><td>900</td><td>7.5</td><td>49.5</td></tr>
+          <tr><td>February</td><td>43</td><td>840</td><td>7.0</td><td>50.0</td></tr>
+          <tr><td>March</td><td>44</td><td>960</td><td>8.0</td><td>52.0</td></tr>
+          <tr><td>April</td><td>41</td><td>720</td><td>6.0</td><td>47.0</td></tr>
+          <tr><td>May</td><td>43</td><td>840</td><td>7.0</td><td>50.0</td></tr>
+          <tr><td>June</td><td>45</td><td>1080</td><td>9.0</td><td>54.0</td></tr>
+          <tr><td>July</td><td>46</td><td>1200</td><td>10.0</td><td>56.0</td></tr>
+          <tr><td>August</td><td>45</td><td>1080</td><td>9.0</td><td>54.0</td></tr>
+          <tr><td>September</td><td>43</td><td>840</td><td>7.0</td><td>50.0</td></tr>
+          <tr><td>October</td><td>42</td><td>780</td><td>6.5</td><td>48.5</td></tr>
+          <tr><td>November</td><td>41</td><td>720</td><td>6.0</td><td>47.0</td></tr>
+          <tr><td>December</td><td>42</td><td>840</td><td>7.0</td><td>49.0</td></tr>
+        </tbody>
+      </table>
+      <div class="note-box">
+        <strong>12-Month Average:</strong> (49.5 + 50.0 + 52.0 + 47.0 + 50.0 + 54.0 + 56.0 + 54.0 + 50.0 + 48.5 + 47.0 + 49.0) / 12 = <strong>50.58</strong><br/>
+        This is >= 50, so the employer proceeds to the seasonal worker check.
+      </div>
+    </div>
+
+    <!-- 5. 12-MONTH AVERAGE & ALE DECISION -->
+    <div class="section" id="s5">
+      <h2><span class="num">5</span> The 12-Month Average &amp; ALE Decision</h2>
+      <p class="subtitle">How the system computes the annual average and applies the 50-employee threshold</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    MONTHS["12 monthly totals calculated<br/>(FT + FTE for each month)"] --> SUM["Sum all 12 monthly totals"]
+
+    SUM --> DIVIDE["Divide by 12"]
+
+    DIVIDE --> RESULT["12-Month Average<br/>Employee Count"]
+
+    RESULT --> CHECK{Average >= 50?}
+
+    CHECK -->|"Below 50<br/>(e.g., 47.3)"| SAFE["NOT AN ALE<br/>ACA employer mandate<br/>does not apply"]
+
+    CHECK -->|"50 or above<br/>(e.g., 50.58)"| NEXT_CHECK["Proceed to Seasonal<br/>Worker Exception check"]
+
+    CHECK -->|"Exactly 50.0"| EXACTLY["EXACTLY 50 = Potential ALE<br/>The threshold is 'fifty or more'<br/>50 counts as meeting it"]
+    EXACTLY --> NEXT_CHECK
+
+    SAFE --> SAFE_DETAIL["Employer can:<br/>- Voluntarily offer coverage<br/>- Qualify for SHOP tax credit<br/>(if under 25 FTE)<br/>- Skip ACA mandate steps"]
+
+    style MONTHS fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style RESULT fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style SAFE fill:#059669,color:#fff,stroke:none
+    style NEXT_CHECK fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style EXACTLY fill:#fffbeb,color:#92400e,stroke:#fde68a
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. SEASONAL WORKER EXCEPTION -->
+    <div class="section" id="s6">
+      <h2><span class="num">6</span> Seasonal Worker Exception</h2>
+      <p class="subtitle">The final check before confirming ALE status - an exception for employers with temporary seasonal spikes</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    ABOVE_50["12-month average<br/>is 50 or above"] --> IDENTIFY["System identifies months<br/>where count exceeded 50"]
+
+    IDENTIFY --> CHECK_SEASONAL["For the months that exceeded 50:<br/>Were the extra employees<br/>seasonal workers?"]
+
+    CHECK_SEASONAL --> TWO_CONDITIONS["Two conditions must BOTH be true:"]
+
+    TWO_CONDITIONS --> C1["Condition 1:<br/>The excess above 50 was caused<br/>by seasonal workers<br/>(not regular new hires)"]
+    TWO_CONDITIONS --> C2["Condition 2:<br/>Those seasonal workers were<br/>employed for 120 calendar days<br/>or fewer during the year"]
+
+    C1 --> BOTH{Both conditions met?}
+    C2 --> BOTH
+
+    BOTH -->|"YES - both true"| EXEMPT["EXCEPTION APPLIES<br/>Employer is NOT an ALE<br/>despite averaging 50+"]
+
+    BOTH -->|"NO - one or both fail"| CONFIRMED["NO EXCEPTION<br/>Employer IS confirmed<br/>as an ALE"]
+
+    EXEMPT --> EXEMPT_DETAIL["Common seasonal industries:<br/>- Agriculture (harvest workers)<br/>- Retail (holiday staff)<br/>- Tourism (summer workers)<br/>- Tax preparation (filing season)"]
+
+    CONFIRMED --> PROCEED["Proceed to mark as ALE<br/>and trigger downstream modules"]
+
+    style ABOVE_50 fill:#fffbeb,color:#92400e,stroke:#fde68a
+    style EXEMPT fill:#059669,color:#fff,stroke:none
+    style CONFIRMED fill:#d97706,color:#fff,stroke:none
+    style PROCEED fill:#d97706,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <div class="warn-box">
+        <strong>120 Days, Not 120 Hours:</strong><br/>
+        The seasonal worker exception uses <strong>120 calendar days</strong> (not hours). If seasonal workers were employed for more than 120 days, even if they only worked a few hours per week, the exception does NOT apply. The count is about duration of employment, not hours worked.
+      </div>
+
+      <div class="note-box">
+        <strong>What Counts as "Seasonal"?</strong><br/>
+        The IRS doesn't have a rigid definition. Generally, it's work that is performed during a certain part of the year due to the nature of the work (e.g., harvest, ski season, summer tourism). It doesn't include "busy season" for year-round businesses or permanent employees hired during a busy period.
+      </div>
+    </div>
+
+    <!-- 7. ALE OUTCOMES & DOWNSTREAM -->
+    <div class="section" id="s7">
+      <h2><span class="num">7</span> ALE Outcomes &amp; Downstream Triggers</h2>
+      <p class="subtitle">What happens after ALE status is determined - two very different paths</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    RESULT{ALE<br/>Determination<br/>Result}
+
+    RESULT -->|"IS an ALE"| ALE_PATH["ALE Confirmed"]
+    RESULT -->|"NOT an ALE"| NOT_PATH["Not an ALE"]
+
+    ALE_PATH --> STORE_ALE["Store ALE status in system<br/>Record: year, average, monthly data"]
+    STORE_ALE --> OBLIGATIONS["5 obligations now apply:"]
+
+    OBLIGATIONS --> O1["1. OFFER COVERAGE<br/>Must offer to 95%+ of<br/>full-time employees"]
+    OBLIGATIONS --> O2["2. MEC STANDARD<br/>Coverage must be<br/>Minimum Essential Coverage"]
+    OBLIGATIONS --> O3["3. MINIMUM VALUE<br/>Plan covers 60%+ of<br/>expected healthcare costs"]
+    OBLIGATIONS --> O4["4. AFFORDABILITY<br/>Employee share <= 9.02%<br/>of household income"]
+    OBLIGATIONS --> O5["5. IRS REPORTING<br/>File 1095-C per FT employee<br/>File 1094-C transmittal"]
+
+    O1 --> PENALTY_A["Failure penalty: 4980H(a)<br/>(FT count - 30) x $2,900/yr"]
+    O4 --> PENALTY_B["Failure penalty: 4980H(b)<br/>$4,350/yr per affected employee"]
+
+    NOT_PATH --> STORE_NOT["Store Not-ALE status<br/>Record calculation details"]
+    STORE_NOT --> NO_OBL["No ACA employer mandate<br/>obligations apply"]
+    NO_OBL --> VOLUNTARY["But employer CAN still:<br/>- Offer coverage voluntarily<br/>- Qualify for SHOP tax credit<br/>- Recheck next year"]
+
+    style ALE_PATH fill:#d97706,color:#fff,stroke:none
+    style NOT_PATH fill:#059669,color:#fff,stroke:none
+    style PENALTY_A fill:#dc2626,color:#fff,stroke:none
+    style PENALTY_B fill:#dc2626,color:#fff,stroke:none
+    style VOLUNTARY fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+        </div>
+      </div>
+
+      <div class="callout-grid">
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:#dc2626;">Penalty 4980H(a) - "Sledgehammer"</h4>
+          <div class="big" style="color:#dc2626;">$2,900/yr</div>
+          <p>Per full-time employee (minus first 30). Triggered when employer fails to offer coverage to 95%+ of FT employees.</p>
+        </div>
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:#dc2626;">Penalty 4980H(b) - "Tack Hammer"</h4>
+          <div class="big" style="color:#dc2626;">$4,350/yr</div>
+          <p>Per affected employee. Triggered when coverage is offered but unaffordable or below MV, and employee gets marketplace subsidy.</p>
+        </div>
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:#059669;">Not ALE - No Penalties</h4>
+          <div class="big" style="color:#059669;">$0</div>
+          <p>No employer mandate. No penalty exposure. Coverage is optional but encouraged.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. ERROR HANDLING -->
+    <div class="section" id="s8">
+      <h2><span class="num">8</span> Error Handling &amp; Data Validation</h2>
+      <p class="subtitle">Every error scenario the system checks and how it responds</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    VALIDATE["Data Validation<br/>runs before any calculation"] --> CHECKS["System checks for:"]
+
+    CHECKS --> E1["Missing Employee Hours<br/>Some months have no<br/>hours data recorded"]
+    CHECKS --> E2["Incorrect Classifications<br/>Employee type doesn't<br/>match their hours"]
+    CHECKS --> E3["Incomplete Monthly Data<br/>Entire months missing<br/>for some employees"]
+    CHECKS --> E4["Missing Employee Records<br/>Employees in payroll but<br/>not in the system"]
+    CHECKS --> E5["Anomalous Data<br/>Impossible values<br/>(e.g., 800 hrs in a month)"]
+
+    E1 --> RESPONSE["System Response<br/>(same for all errors):"]
+    E2 --> RESPONSE
+    E3 --> RESPONSE
+    E4 --> RESPONSE
+    E5 --> RESPONSE
+
+    RESPONSE --> R1["1. STOP calculation<br/>Do not produce<br/>any ALE result"]
+    RESPONSE --> R2["2. HIGHLIGHT exact issues<br/>Show which employees,<br/>which months are affected"]
+    RESPONSE --> R3["3. GUIDE user to fix<br/>Provide clear instructions<br/>on what needs to be corrected"]
+    RESPONSE --> R4["4. BLOCK progression<br/>User cannot proceed<br/>until issues are resolved"]
+
+    R1 --> FIXED{User fixes<br/>the data}
+    R2 --> FIXED
+    R3 --> FIXED
+    R4 --> FIXED
+
+    FIXED --> REVALIDATE["Re-run validation<br/>from the beginning"]
+    REVALIDATE --> PASS{All checks<br/>pass now?}
+    PASS -->|YES| PROCEED["Proceed to<br/>calculations"]
+    PASS -->|NO| RESPONSE
+
+    style VALIDATE fill:#f1f5f9,color:#0f172a,stroke:#e2e8f0
+    style E1 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style E2 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style E3 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style E4 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style E5 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style PROCEED fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+      <div class="gap-box">
+        <strong>Why the system blocks calculation on bad data:</strong><br/>
+        An incorrect ALE determination can lead to two costly outcomes: (1) the employer wrongly believes they're not an ALE and fails to offer coverage, resulting in IRS penalties, or (2) the employer wrongly believes they're an ALE and spends money on coverage they weren't required to provide. Both are prevented by strict data validation.
+      </div>
+    </div>
+
+    <!-- 9. DASHBOARD DISPLAY -->
+    <div class="section" id="s9">
+      <h2><span class="num">9</span> ALE Dashboard Summary Display</h2>
+      <p class="subtitle">What the user sees after the ALE determination is complete</p>
+
+      <h3 class="sub">Dashboard Components</h3>
+      <table class="ref">
+        <thead><tr><th>Component</th><th>What It Shows</th><th>Why It Matters</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ALE Status Banner</strong></td><td>Large, clear "ALE" or "Not ALE" indicator with the measurement year</td><td>Immediate answer to the user's primary question</td></tr>
+          <tr><td><strong>12-Month Average</strong></td><td>The calculated average number (e.g., 50.58)</td><td>Shows how close or far the employer is from the threshold</td></tr>
+          <tr><td><strong>Monthly Breakdown Table</strong></td><td>12 rows showing each month's FT count, PT hours, FTE equivalents, and monthly total</td><td>Transparency into the calculation - user can verify each month</td></tr>
+          <tr><td><strong>Controlled Group Summary</strong></td><td>List of related companies, ownership %, combined employee count per company</td><td>Shows which companies were aggregated and their individual vs combined totals</td></tr>
+          <tr><td><strong>TRICARE Exclusions Summary</strong></td><td>Count of veterans excluded, their names/IDs, and impact on FTE count</td><td>Audit trail showing who was excluded and why - critical for compliance documentation</td></tr>
+          <tr><td><strong>Seasonal Worker Analysis</strong></td><td>Whether the seasonal exception was checked, and the result</td><td>Shows why the exception did or didn't apply</td></tr>
+          <tr><td><strong>Workforce Trend Chart</strong></td><td>Visual graph of monthly totals over the 12 months</td><td>Shows workforce patterns (seasonal spikes, growth trends)</td></tr>
+          <tr><td><strong>Compliance Risk Alerts</strong></td><td>Warnings if the employer is an ALE (coverage obligations, penalty exposure)</td><td>Prompts the user to take action on downstream requirements</td></tr>
+          <tr><td><strong>Downstream Module Links</strong></td><td>Quick links to MEC Validation, Affordability Testing, IRS Reporting</td><td>Guides the user to the next steps in the compliance workflow</td></tr>
+          <tr><td><strong>Supporting Calculations</strong></td><td>Detailed FTE computation breakdown, methodology notes</td><td>Audit trail - can be exported for compliance documentation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 10. KEY NUMBERS -->
+    <div class="section" id="s10">
+      <h2><span class="num">10</span> Key Numbers &amp; Thresholds Reference</h2>
+      <p class="subtitle">Every number the ALE determination system uses</p>
+
+      <table class="ref">
+        <thead><tr><th>Number</th><th>What It Is</th><th>Where It's Used</th></tr></thead>
+        <tbody>
+          <tr><td><strong>80% ownership</strong></td><td>Threshold for controlled group determination</td><td>If common ownership is 80%+, companies must aggregate employees for ALE</td></tr>
+          <tr><td><strong>TRICARE</strong></td><td>Military healthcare program (service members, retirees, dependents)</td><td>Employees covered under TRICARE are excluded from the ALE headcount entirely</td></tr>
+          <tr><td><strong>130 hours/month</strong></td><td>IRS threshold for full-time employee classification</td><td>Classifying each non-excluded employee as FT or PT in each month</td></tr>
+          <tr><td><strong>120 hours</strong></td><td>Divisor for converting part-time hours to FTEs</td><td>FTE formula: total PT monthly hours / 120</td></tr>
+          <tr><td><strong>12 months</strong></td><td>Full calendar year measurement period</td><td>All 12 months must be calculated and averaged</td></tr>
+          <tr><td><strong>50 FTEs</strong></td><td>The ALE threshold (12-month average)</td><td>If average >= 50, employer is a potential ALE</td></tr>
+          <tr><td><strong>120 days</strong></td><td>Maximum duration for seasonal worker exception</td><td>Seasonal workers employed > 120 days don't qualify for exception</td></tr>
+          <tr><td><strong>95%</strong></td><td>Minimum % of FT employees that must be offered coverage (post-ALE)</td><td>MEC coverage check, triggers 4980H(a) if not met</td></tr>
+          <tr><td><strong>30 employees</strong></td><td>First 30 FT employees exempt from 4980H(a) penalty</td><td>Penalty calculation: (FT count - 30) x rate</td></tr>
+          <tr><td><strong>$2,900/year</strong></td><td>2025 penalty rate for IRC 4980H(a)</td><td>Penalty when employer fails to offer coverage to 95%+ FT</td></tr>
+          <tr><td><strong>$4,350/year</strong></td><td>2025 penalty rate for IRC 4980H(b)</td><td>Penalty per employee who receives marketplace subsidy</td></tr>
+          <tr><td><strong>9.02%</strong></td><td>Affordability threshold for 2025</td><td>Employee premium must be <= 9.02% of income</td></tr>
+          <tr><td><strong>60%</strong></td><td>Minimum Value threshold</td><td>Plan must cover >= 60% of expected costs</td></tr>
+        </tbody>
+      </table>
+
+      <div class="success-box" style="margin-top:20px;">
+        <strong>Summary - The ALE Determination in One Sentence:</strong><br/>
+        First aggregate employees across all companies in a controlled group (80%+ common ownership), exclude TRICARE-covered veterans, then for each of the 12 months count full-time employees (130+ hrs/month) and add part-time FTE equivalents (total PT hours / 120), average those 12 monthly totals, and if the result is 50 or more (with no seasonal worker exception), the entire group is an ALE and every member company must offer affordable, qualifying health coverage or face IRS penalties.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e40af',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#94a3b8',
+        secondaryColor: '#f1f5f9',
+        tertiaryColor: '#ecfdf5',
+        fontFamily: 'Inter, -apple-system, sans-serif',
+        fontSize: '13px'
+      },
+      flowchart: {
+        curve: 'basis',
+        padding: 16,
+        nodeSpacing: 30,
+        rankSpacing: 40,
+        htmlLabels: true
+      }
+    });
+  </script>
+</body>
+</html>

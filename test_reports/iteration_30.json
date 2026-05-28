@@ -1,0 +1,96 @@
+{
+  "summary": "Tested affordability assignment block feature. Backend API correctly returns 422 with unaffordable_employees array when plan is unaffordable. Frontend Plan Library page loads correctly with MEC/MV badges, Assign buttons disabled for MV-failing plans (Platinum PPO), and Assign Employees dialog opens for MV-passing plans (Gold HMO, Silver PPO). The affordability-error-block JSX is properly implemented in PlanLibraryPage.js (lines 958-1001) to display when 422 error is caught.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: POST /api/enrollment/plans/{plan_id}/assign-employees returns 422 for Platinum PPO ($744/mo) when assigning Adam Murphy ($49,782 salary)",
+    "Backend: 422 response contains message, unaffordable_employees array, and plan_cost",
+    "Backend: unaffordable_employees array contains: employee_id, name, annual_salary, employee_monthly_cost, max_affordable_monthly, pct_of_income, threshold",
+    "Backend: Assignment succeeds (200) for Silver PPO ($100/mo) - affordable for Adam Murphy",
+    "Backend: Assignment succeeds (200) for Gold HMO ($115/mo) - affordable for Adam Murphy",
+    "Backend: GET /api/enrollment/plans/{plan_id}/assigned-employees returns employee list",
+    "Backend: GET /api/enrollment/employees-list/{employer_id} returns 60 employees",
+    "Frontend: Plan Library page loads with 8 plan cards",
+    "Frontend: MEC/MV badges display correctly on plan cards",
+    "Frontend: Platinum PPO Assign button is DISABLED (MV fail - correct behavior)",
+    "Frontend: Gold HMO Assign button is enabled (MV pass)",
+    "Frontend: Silver PPO Assign button is enabled (MV pass)",
+    "Frontend: Assign Employees dialog opens with 60 employee rows",
+    "Frontend: Dialog contains search input, Select All button, Save Assignments button",
+    "Frontend: affordability-error-block JSX properly implemented (lines 958-1001)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_affordability_assignment_block.py",
+    "/app/test_reports/pytest/affordability_assignment_block_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend affordability check in enrollment_workflow.py lines 583-616 correctly implements ACA 9.96% threshold check before assignment",
+    "Frontend catches 422 error in handleSaveAssignments (line 280) and sets affordabilityError state",
+    "Frontend affordability-error-block (lines 958-1001) renders table with employee salary, cost, max affordable, and % of income",
+    "Platinum PPO Assign button correctly disabled due to MV fail (line 430-441) - the 422 backend check is a safety net"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_affordability_assignment_block.py"
+  ],
+  "success_rate": {
+    "backend": "100% (6/6 tests passed)",
+    "frontend": "100% (all UI elements working correctly)"
+  },
+  "test_credentials": {
+    "employer": {
+      "email": "fajju2001@gmail.com",
+      "password": "test123",
+      "employer_id": "351025eb-da00-4267-8b09-e7b061b55101"
+    }
+  },
+  "seed_data_creation": "No new seed data created. Used existing plans and employees.",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Affordability assignment block feature fully tested. Key findings: (1) Backend POST /api/enrollment/plans/{plan_id}/assign-employees returns 422 with detailed unaffordable_employees array when plan cost exceeds 9.96% of employee salary. (2) Frontend Assign button is disabled for MV-failing plans (Platinum PPO), so the 422 error is primarily a backend safety net. (3) The affordability-error-block JSX (lines 958-1001) is properly implemented to display when 422 is caught. (4) Test data: Platinum PPO ($744/mo EE cost) triggers 422 for Adam Murphy ($49,782 salary, max affordable $413.19/mo). Silver PPO ($100/mo) and Gold HMO ($115/mo) succeed.",
+  "verified_feature_details": {
+    "feature_description": "Affordability assignment block - 422 error when plan is unaffordable for employee",
+    "backend_implementation": {
+      "file": "backend/routes/enrollment_workflow.py",
+      "lines": "569-616",
+      "description": "POST /api/enrollment/plans/{plan_id}/assign-employees checks affordability before assignment. Returns 422 with unaffordable_employees array if plan cost > 9.96% of employee salary."
+    },
+    "frontend_implementation": {
+      "file": "frontend/src/pages/PlanLibraryPage.js",
+      "error_handling": "Line 280 - catches 422 and sets affordabilityError state",
+      "error_block_ui": "Lines 958-1001 - renders affordability-error-block with employee table",
+      "assign_button_disabled": "Lines 430-441 - Assign button disabled when mvFails"
+    },
+    "test_results": {
+      "platinum_ppo": {
+        "plan_id": "16739425-5a63-45d9-9fde-418724747016",
+        "employee_cost": "$744/mo",
+        "result": "422 Unprocessable Entity",
+        "reason": "Exceeds 9.96% threshold for Adam Murphy"
+      },
+      "silver_ppo": {
+        "plan_id": "ac820c3c-4409-4818-82c5-55c8ba523ce9",
+        "employee_cost": "$100/mo",
+        "result": "200 OK",
+        "reason": "Within 9.96% threshold"
+      },
+      "gold_hmo": {
+        "plan_id": "bc701f0b-29c4-4f37-ab42-ebb4f5fad085",
+        "employee_cost": "$115/mo",
+        "result": "200 OK",
+        "reason": "Within 9.96% threshold"
+      }
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "summary": "Tested MV (Minimum Value) compliance fix. Bug was that MV check was incorrectly passing plans where employer contribution was far below 60% of total premium. Fix verified: MV now requires BOTH actuarial value >= 60% AND employer contribution >= 60% of total premium. All backend tests pass (7/7). Frontend UI correctly shows MV fail badges and compliance popup with separate Actuarial Value and Employer Contribution checks.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: Platinum PPO MV check FAILS (mv=90%, er_contrib=0.8% < 60%)",
+    "Backend: Silver PPO MV check PASSES (mv=62%, er_contrib=77.8%)",
+    "Backend: Gold HMO MV check PASSES (mv=78%, er_contrib=80.2%)",
+    "Backend: Bronze HDHP MV check PASSES (mv=89%, er_contrib=78.1%)",
+    "Backend: Standard EPO MV check PASSES (mv=68%, er_contrib=81%)",
+    "Backend: MV response includes new fields (employer_contribution_pct, employer_contribution_pass, actuarial_pass)",
+    "Backend: Compliance response structure is correct",
+    "Frontend: Plan Library shows MV fail badge 'MV 90% (ER 1% — Fail)' for Platinum PPO",
+    "Frontend: Compliance popup shows Actuarial Value check (Pass) and Employer Contribution check (Fail — Below 60%) separately",
+    "Frontend: Compliance popup shows employer contribution as '0.8% of premium'",
+    "Frontend: Silver PPO compliance popup shows all Pass indicators",
+    "Frontend: Assign button appears disabled/grayed for Platinum PPO (MV fails)",
+    "Frontend: Employee Portal MV badge code correctly implements dual check (actuarial >= 60% AND er_contrib >= 60%)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_mv_compliance_fix.py",
+    "/app/test_reports/pytest/mv_compliance_fix_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MV check correctly updated in 3 locations: compliance-check endpoint (line 417-419), offer code calculation (line 70), and eligibility engine (line 717)",
+    "Frontend PlanLibraryPage.js correctly calculates ER contribution percentage and shows appropriate fail badges",
+    "Frontend compliance popup correctly displays both Actuarial Value and Employer Contribution checks separately",
+    "EmployeePortalPage.js MV badge logic updated in both enrolled view (line 360) and plan selection view (line 679)"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_mv_compliance_fix.py"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7 tests passed)",
+    "frontend": "100% (all MV badge and compliance popup features working)"
+  },
+  "test_credentials": {
+    "employer": {
+      "email": "fajju2001@gmail.com",
+      "password": "test123",
+      "employer_id": "351025eb-da00-4267-8b09-e7b061b55101"
+    },
+    "employee_declined": {
+      "email": "david.chen@company.com",
+      "password": "test123"
+    }
+  },
+  "seed_data_creation": "No new seed data created. Used existing plans: Platinum PPO (id: 16739425-5a63-45d9-9fde-418724747016), Silver PPO (id: ac820c3c-4409-4818-82c5-55c8ba523ce9), Gold HMO (id: bc701f0b-29c4-4f37-ab42-ebb4f5fad085), Bronze HDHP (id: 46ef441c-ab24-4a2d-a583-79f29ada5dcf), Standard EPO (id: 70cb740e-d7c1-4798-8ddc-035bfe79bbd5)",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "MV compliance fix verified. Key test data: Platinum PPO (mv=90%, er_contrib=$6/$750=0.8%) correctly FAILS MV due to low employer contribution. Other plans (Silver PPO, Gold HMO, Bronze HDHP, Standard EPO) all PASS MV with employer contributions >= 60%. The compliance check endpoint POST /api/enrollment/plans/{plan_id}/compliance-check returns new fields: employer_contribution_pct, employer_contribution_pass, actuarial_pass. Frontend correctly displays these in compliance popup and plan card badges.",
+  "verified_fix_details": {
+    "bug_description": "MV check was incorrectly passing plans where employer contribution was far below 60% of total premium",
+    "fix_applied": "MV now requires BOTH actuarial value >= 60% AND employer contribution >= 60% of total self-only premium",
+    "test_case_platinum_ppo": {
+      "mv_percentage": 90,
+      "employer_contribution": 6,
+      "total_premium": 750,
+      "employer_contribution_pct": 0.8,
+      "actuarial_pass": true,
+      "employer_contribution_pass": false,
+      "mv_pass": false
+    },
+    "test_case_silver_ppo": {
+      "mv_percentage": 62,
+      "employer_contribution": 350,
+      "total_premium": 450,
+      "employer_contribution_pct": 77.8,
+      "actuarial_pass": true,
+      "employer_contribution_pass": true,
+      "mv_pass": true
+    }
+  }
+}

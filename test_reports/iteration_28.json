@@ -1,0 +1,86 @@
+{
+  "summary": "Tested HHS MV Calculator implementation. The dynamic calculator correctly calculates actuarial value from plan parameters (deductible, coinsurance, copays, OOP max) using standard population costs ($12,500). All 11 backend tests pass. Frontend compliance popup correctly displays: Plan Parameters, Standard Population Cost Analysis, Service Category Breakdown table (8 categories), Monthly Premium Analysis with employer/employee split. MV percentages match expected values: Silver PPO ~64%, Gold HMO ~76%, Bronze HDHP ~47% (FAIL), Platinum PPO ~76% (FAIL due to 0.8% ER contrib), Standard EPO ~68%.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: Silver PPO MV calculation returns ~64% (passes MV threshold)",
+    "Backend: Gold HMO MV calculation returns ~76% (passes MV threshold)",
+    "Backend: Bronze HDHP MV calculation returns ~47% (correctly FAILS MV threshold)",
+    "Backend: Platinum PPO MV calculation returns ~76% but FAILS due to 0.8% ER contribution",
+    "Backend: Standard EPO MV calculation returns ~68% (passes MV threshold)",
+    "Backend: MV response includes category_breakdown array with 8 service categories",
+    "Backend: MV response includes premium_analysis object with employer_pct and employer_contribution_pass",
+    "Backend: MV response includes plan_parameters object (deductible, coinsurance, oop_max)",
+    "Backend: MV response includes total_allowed_cost ($12,500), plan_pays, member_pays",
+    "Backend: MV response includes employer_contribution_pct and employer_contribution_pass fields",
+    "Backend: Compliance check updates stored mv_percentage in DB after calculation",
+    "Frontend: Compliance popup shows 'HHS MV Calculator' as method",
+    "Frontend: Compliance popup shows Plan Parameters section (Deductible, Coinsurance, OOP Max)",
+    "Frontend: Compliance popup shows Standard Population Cost Analysis (Total Allowed, Plan Pays, Member Pays)",
+    "Frontend: Compliance popup shows Service Category Breakdown table with 8 categories",
+    "Frontend: Compliance popup shows Monthly Premium Analysis with Employer/Employee split",
+    "Frontend: Silver PPO shows MV Pass badge (64.4%)",
+    "Frontend: Bronze HDHP shows MV Fail badge (47.1%)",
+    "Frontend: Platinum PPO shows MV Fail badge (76% but ER contrib 0.8% fails)",
+    "Frontend: Gold HMO shows MV Pass badge (75.7%)",
+    "Frontend: Plan card badges correctly display MV percentages and fail indicators"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_hhs_mv_calculator.py",
+    "/app/test_reports/pytest/hhs_mv_calculator_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "HHS MV Calculator in backend/services/mv_calculator.py correctly implements standard population cost methodology with $12,500 total allowed costs",
+    "Calculator properly handles 8 service categories: Inpatient, Outpatient, Physician, Specialist, ER, Generic Rx, Brand Rx, Lab/Imaging",
+    "OOP max capping is correctly applied when member costs exceed the limit (visible in Platinum PPO test)",
+    "Employer contribution check (>= 60%) is correctly enforced alongside actuarial value check",
+    "Frontend PlanLibraryPage.js correctly displays all HHS Calculator breakdown sections in compliance popup"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_hhs_mv_calculator.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (all HHS MV Calculator UI features working correctly)"
+  },
+  "test_credentials": {
+    "employer": {
+      "email": "fajju2001@gmail.com",
+      "password": "test123",
+      "employer_id": "351025eb-da00-4267-8b09-e7b061b55101"
+    }
+  },
+  "seed_data_creation": "No new seed data created. Used existing plans: Silver PPO (ac820c3c-4409-4818-82c5-55c8ba523ce9), Gold HMO (bc701f0b-29c4-4f37-ab42-ebb4f5fad085), Bronze HDHP (46ef441c-ab24-4a2d-a583-79f29ada5dcf), Platinum PPO (16739425-5a63-45d9-9fde-418724747016), Standard EPO (70cb740e-d7c1-4798-8ddc-035bfe79bbd5)",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "HHS MV Calculator feature fully tested and working. Key test data: Silver PPO (MV 64.4%, ER 77.8% - PASS), Gold HMO (MV 75.7%, ER 80.2% - PASS), Bronze HDHP (MV 47.1%, ER 78.1% - FAIL due to low actuarial value), Platinum PPO (MV 76%, ER 0.8% - FAIL due to low employer contribution), Standard EPO (MV 67.8%, ER 81% - PASS). The compliance check endpoint POST /api/enrollment/plans/{plan_id}/compliance-check returns detailed HHS Calculator breakdown including: category_breakdown (8 items), premium_analysis, plan_parameters, total_allowed_cost ($12,500), plan_pays, member_pays, employer_contribution_pct, employer_contribution_pass. Frontend compliance popup displays all these sections correctly.",
+  "verified_feature_details": {
+    "feature_description": "HHS MV Calculator dynamically calculates actuarial value from plan parameters",
+    "calculation_methodology": "Uses standard population total allowed costs of $12,500 across 8 service categories. Applies deductible, copays, coinsurance, and OOP max to determine actuarial value.",
+    "test_results": {
+      "silver_ppo": {"mv_percentage": 64.4, "er_contribution_pct": 77.8, "overall_pass": true},
+      "gold_hmo": {"mv_percentage": 75.7, "er_contribution_pct": 80.2, "overall_pass": true},
+      "bronze_hdhp": {"mv_percentage": 47.1, "er_contribution_pct": 78.1, "overall_pass": false, "fail_reason": "MV below 60%"},
+      "platinum_ppo": {"mv_percentage": 76, "er_contribution_pct": 0.8, "overall_pass": false, "fail_reason": "ER contribution below 60%"},
+      "standard_epo": {"mv_percentage": 67.8, "er_contribution_pct": 81, "overall_pass": true}
+    },
+    "ui_sections_verified": [
+      "Plan Parameters (Deductible, Coinsurance, OOP Max)",
+      "Standard Population Cost Analysis (Total Allowed, Plan Pays, Member Pays)",
+      "Service Category Breakdown table (8 categories with Cost, Copays, Plan, Member columns)",
+      "Monthly Premium Analysis (Total Premium, Employer Pays, Employee Pays, Employer Contribution %)"
+    ]
+  }
+}

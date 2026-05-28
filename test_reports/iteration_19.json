@@ -1,0 +1,78 @@
+{
+  "summary": "Tested IRS Offer Codes and 1095-C/1094-C form generation. All 15 backend tests passed (100%). All frontend tests passed. Critical fix verified: FT employees now correctly get offer codes 1B/1C/1D/1E (not 1H) when medical plans are available. 1095-C Line 14 codes match eligibility-calculated offer codes. IRS forms correctly use plan_library collection.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: GET /api/enrollment/eligibility/{employer_id} returns 200 with 60 employees",
+    "Backend: All eligibility results have valid offer codes (1A-1H)",
+    "Backend: FT employees NOT assigned 1H when plans available (0 FT with 1H)",
+    "Backend: PT employees correctly get 1H (13 PT with 1H)",
+    "Backend: POST /api/enrollment/eligibility/run/{employer_id} recalculates offer codes correctly",
+    "Backend: Eligibility engine assigns correct codes - distribution: 1B(23), 1C(13), 1D(5), 1E(6), 1H(13)",
+    "Backend: GET /api/irs-forms/1095c/{employer_id}/2026 returns 47 forms",
+    "Backend: 1095-C Line 14 codes match eligibility offer codes",
+    "Backend: 1095-C forms have NO 1H or 1F codes for FT employees",
+    "Backend: GET /api/irs-forms/1094c/{employer_id}/2026 returns valid form",
+    "Backend: 1094-C summary uses plan_library (8 plans)",
+    "Backend: GET /api/irs-forms/summary/{employer_id}/2026 returns correct data",
+    "Backend: IRS summary plans_count matches plan_library (8 plans)",
+    "Backend: GET /api/enrollment/plans/{employer_id} returns 8 plans",
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check works correctly",
+    "Frontend: Login with fajju2001@gmail.com / test123 successful",
+    "Frontend: Dashboard loads with 60 employees, 47 FT, 57.25 FTE, ALE status",
+    "Frontend: IRS Forms page loads with summary cards",
+    "Frontend: Generate All Forms button works",
+    "Frontend: 1094-C tab shows transmittal form with employer info and monthly data",
+    "Frontend: 1095-C tab shows 47 forms with Line 14 codes (1B, 1C, 1D, 1E - no 1H)",
+    "Frontend: No error messages on any page"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_irs_offer_codes.py",
+    "/app/test_reports/pytest/irs_offer_codes_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FPL threshold correctly set to $129.89 in irs_forms.py (line 66) for 2026",
+    "_recalculate_offer_code correctly falls back to all active medical plans when no specific plan_assignments exist",
+    "Decline handler correctly uses _recalculate_offer_code instead of hardcoding '1A'",
+    "All IRS form endpoints correctly use plan_library instead of legacy plans collection",
+    "1095-C Line 14 correctly overridden with pre-calculated eligibility offer codes"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_irs_offer_codes.py"
+  ],
+  "success_rate": {
+    "backend": "100% (15/15 tests passed)",
+    "frontend": "100% (all IRS Forms features working correctly)"
+  },
+  "test_credentials": {
+    "employer": {
+      "email": "fajju2001@gmail.com",
+      "password": "test123",
+      "role": "employer",
+      "employer_id": "351025eb-da00-4267-8b09-e7b061b55101"
+    }
+  },
+  "seed_data_creation": "No new seed data created. Used existing employer with 60 employees (47 FT, 13 PT), 8 plans in plan_library",
+  "mocked_apis": {
+    "has_mocked_apis": true,
+    "mocked_apis_list": ["ADP Payroll sync data", "AI Analysis (rule-based fallback due to exhausted LLM budget)"]
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "IRS Offer Codes fully tested and working. Key findings: 1) Eligibility engine correctly assigns offer codes based on what is OFFERED (not enrolled). 2) FT employees get 1B/1C/1D/1E based on coverage tier offered, PT employees get 1H. 3) 1095-C Line 14 codes are overridden with pre-calculated eligibility offer codes. 4) All IRS form endpoints use plan_library collection (8 active plans). 5) 2026 rates verified: $129.89 FPL threshold, 9.96% affordability. Offer code distribution: 1B(23), 1C(13), 1D(5), 1E(6), 1H(13 PT only).",
+  "verified_fixes": {
+    "fpl_threshold": "$129.89/month for 2026 (line 66 in irs_forms.py)",
+    "eligibility_fallback": "Falls back to all active medical plans when no plan_assignments exist",
+    "decline_handler": "Uses _recalculate_offer_code instead of hardcoding '1A'",
+    "irs_endpoints": "All use plan_library instead of legacy plans collection",
+    "line14_override": "1095-C Line 14 overridden with eligibility-calculated offer codes"
+  }
+}

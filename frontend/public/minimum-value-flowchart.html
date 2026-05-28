@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CompliCore - Minimum Value (MV) Detailed Flowchart</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --primary: #1e40af; --success: #059669; --error: #dc2626;
+      --warning: #d97706; --accent-bg: #eff6ff; --purple: #7c3aed; --purple-bg: #ede9fe;
+      --teal: #0d9488; --teal-bg: #ccfbf1; --orange: #ea580c; --orange-bg: #fff7ed;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+    .header .badge { display: inline-block; background: var(--teal-bg); color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; margin-bottom: 16px; }
+    .header h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .header p { color: var(--muted); font-size: 15px; max-width: 780px; margin: 0 auto; }
+    .meta-row { display: flex; justify-content: center; gap: 24px; margin-top: 16px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+    .meta-row strong { color: var(--text); }
+    .section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin-bottom: 24px; }
+    .section h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .section h2 .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--teal); color: #fff; font-size: 13px; font-weight: 700; border-radius: 8px; flex-shrink: 0; }
+    .section .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .mermaid-wrap { background: #fafbfc; border: 1px solid var(--border); border-radius: 8px; padding: 24px 16px; overflow-x: auto; margin-bottom: 20px; }
+    .mermaid { display: flex; justify-content: center; }
+    .mermaid svg { max-width: 100%; height: auto; }
+    .note-box { background: var(--accent-bg); border-left: 3px solid var(--primary); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .note-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .warn-box { background: #fffbeb; border-left: 3px solid var(--warning); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .warn-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--warning); }
+    .gap-box { background: #fef2f2; border-left: 3px solid var(--error); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .gap-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--error); }
+    .success-box { background: #ecfdf5; border-left: 3px solid var(--success); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .success-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--success); }
+    .purple-box { background: var(--purple-bg); border-left: 3px solid var(--purple); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .purple-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); }
+    .teal-box { background: var(--teal-bg); border-left: 3px solid var(--teal); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .teal-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--teal); }
+    .orange-box { background: var(--orange-bg); border-left: 3px solid var(--orange); padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 13px; margin-top: 16px; }
+    .orange-box strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--orange); }
+    table.ref { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+    table.ref th { background: #f1f5f9; text-align: left; padding: 10px 14px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 2px solid var(--border); }
+    table.ref td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table.ref tr:last-child td { border-bottom: none; }
+    h3.sub { font-size: 15px; margin-top: 24px; margin-bottom: 8px; font-weight: 700; }
+    .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 32px; margin-bottom: 24px; }
+    .toc h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+    .toc ol { padding-left: 20px; }
+    .toc li { font-size: 13px; padding: 3px 0; }
+    .toc a { color: var(--teal); text-decoration: none; font-weight: 500; }
+    .toc a:hover { text-decoration: underline; }
+    .callout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+    .callout-card { padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+    .callout-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .callout-card p { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+    .callout-card .big { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+    .how-to { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 12px; }
+    .how-to h5 { font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .how-to ol, .how-to ul { padding-left: 18px; font-size: 13px; }
+    .how-to ol li, .how-to ul li { padding: 4px 0; }
+    .scenario-box { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+    .scenario-box h5 { font-size: 12px; font-weight: 700; color: #92400e; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .scenario-box p { font-size: 13px; color: #78350f; margin-bottom: 4px; }
+    .timeline { margin-top: 16px; padding-left: 24px; border-left: 3px solid var(--teal); }
+    .timeline .step { padding: 12px 0 12px 20px; position: relative; }
+    .timeline .step::before { content: ''; position: absolute; left: -31px; top: 16px; width: 12px; height: 12px; border-radius: 50%; background: var(--teal); border: 2px solid #fff; }
+    .timeline .step h4 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .timeline .step p { font-size: 12px; color: var(--muted); }
+    .timeline .step.active::before { background: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.2); }
+    .timeline .step.done::before { background: var(--success); }
+    .timeline .step.fail::before { background: var(--error); }
+    .form-mock { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 20px 24px; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.8; margin-top: 16px; overflow-x: auto; white-space: pre; }
+    .form-mock .label { color: #94a3b8; }
+    .form-mock .val { color: #34d399; }
+    .form-mock .title { color: #60a5fa; font-weight: 700; }
+    .form-mock .divider { color: #334155; }
+    .form-mock .result-pass { color: #34d399; font-weight: 700; }
+    .form-mock .result-fail { color: #f87171; font-weight: 700; }
+    .quote-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-top: 12px; }
+    .quote-card .name { font-size: 15px; font-weight: 700; }
+    .quote-card .cred { font-size: 11px; color: var(--teal); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .quote-card .price { font-size: 22px; font-weight: 800; color: var(--text); margin: 6px 0; }
+    .quote-card .details { font-size: 12px; color: var(--muted); }
+    .quote-card .details span { display: block; padding: 2px 0; }
+    .decision-table td.yes { background: #ecfdf5; color: #065f46; font-weight: 600; }
+    .decision-table td.no { background: #fef2f2; color: #991b1b; font-weight: 600; }
+    .cert-doc { background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px; padding: 24px 28px; margin-top: 16px; font-size: 13px; }
+    .cert-doc .cert-title { font-size: 16px; font-weight: 800; text-align: center; color: #065f46; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .cert-doc p { margin-bottom: 4px; }
+    .cert-doc .sig { margin-top: 12px; font-style: italic; color: var(--muted); }
+    .progress-bar { background: #e2e8f0; border-radius: 100px; height: 8px; overflow: hidden; margin-top: 8px; }
+    .progress-bar .fill { height: 100%; border-radius: 100px; transition: width 0.3s; }
+    .progress-bar .fill.green { background: #059669; }
+    .progress-bar .fill.blue { background: #1e40af; }
+    .progress-bar .fill.red { background: #dc2626; }
+    @media print { body { background: #fff; } .container { padding: 20px; } .section { break-inside: avoid; border: 1px solid #ddd; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="badge">Minimum Value &mdash; Complete User Journey</div>
+      <h1>ACA Minimum Value (MV) Determination</h1>
+      <p>A step-by-step guide from plan design through HHS calculator testing, actuary marketplace selection, actuarial certification, and MV Safe Harbor Notices &mdash; covering every field, every decision, and every document.</p>
+      <div class="meta-row">
+        <span><strong>MV Threshold:</strong> 60% Actuarial Value</span>
+        <span><strong>Tool:</strong> HHS MV Calculator (Free)</span>
+        <span><strong>Backup:</strong> Actuarial Certification</span>
+        <span><strong>Safe Harbor:</strong> IRS Notice 2014-69</span>
+        <span><strong>Penalty:</strong> 4980H(b) - $4,350/yr</span>
+      </div>
+    </div>
+
+    <div class="toc">
+      <h3>Table of Contents</h3>
+      <ol>
+        <li><a href="#s1">Master Flowchart: MV End-to-End Process</a></li>
+        <li><a href="#s2">What Is Minimum Value? &mdash; The Two Requirements</a></li>
+        <li><a href="#s3">The HHS MV Calculator: What It Is &amp; What You Enter</a></li>
+        <li><a href="#s4">Product Implementation: 5 Steps to Build MV Testing</a></li>
+        <li><a href="#s5">Step 1: User Uploads SBC / Enters Plan Data</a></li>
+        <li><a href="#s6">Step 2: HHS Calculator Runs &mdash; PASS or FAIL</a></li>
+        <li><a href="#s7">When MV Fails: The Actuary Marketplace Opens</a></li>
+        <li><a href="#s8">Step 3: Quote Sent &mdash; Actuary Accept/Reject &amp; Payment Flow</a></li>
+        <li><a href="#s9">Step 4: Actuary Works in Dedicated Portal (After Payment)</a></li>
+        <li><a href="#s10">Step 5: Certification Documents Delivered</a></li>
+        <li><a href="#s11">MV Safe Harbor Notices &mdash; IRS Protection</a></li>
+        <li><a href="#s12">Complete Reference: Thresholds, Legal Sources &amp; Penalties</a></li>
+      </ol>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 1. MASTER FLOWCHART -->
+    <!-- ============================================================ -->
+    <div class="section" id="s1">
+      <h2><span class="num">1</span> Master Flowchart: MV End-to-End Process</h2>
+      <p class="subtitle">The complete journey from plan data entry through MV determination, including the actuary certification fallback path</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    MEC_PASS["Plan has passed<br/>MEC check<br/>(Minimum Essential Coverage)"] --> MV_START["System now tests<br/>MINIMUM VALUE<br/>Does the plan cover at<br/>least 60% of total<br/>allowed costs?"]
+
+    MV_START --> INPUT["Employer provides<br/>plan design data<br/>(upload SBC or manual entry)"]
+
+    INPUT --> CALC["HHS MV Calculator runs<br/>automatically on plan data"]
+
+    CALC --> RESULT{AV result?}
+
+    RESULT -->|"60% or above"| PASS["MV PASS<br/>Plan meets Minimum Value<br/>Example: 62.3% MV"]
+    RESULT -->|"Below 60%"| FAIL["MV FAIL<br/>Plan does not meet MV<br/>Example: 58.2% MV"]
+
+    PASS --> SAFE_HARBOR["Generate MV Safe<br/>Harbor Notice<br/>IRS Notice 2014-69"]
+    SAFE_HARBOR --> EXPORT_PASS["Export PDF:<br/>MV Calculator Results<br/>+ Safe Harbor Notice"]
+
+    FAIL --> BANNER["Red banner appears:<br/>Calculator cannot certify.<br/>Actuarial certification required."]
+
+    BANNER --> MARKET["Blue button:<br/>Get Actuarial Quote"]
+
+    MARKET --> DIRECTORY["Actuary Marketplace opens<br/>500+ MAAA actuaries"]
+
+    DIRECTORY --> MATCH["Top 3 matches highlighted<br/>Employer sends quote requests"]
+
+    MATCH --> ACT_DASH["Quote appears on<br/>Actuary Dashboard<br/>Action Required section"]
+
+    ACT_DASH --> ACT_DECISION{Actuary<br/>accepts or<br/>rejects?}
+
+    ACT_DECISION -->|"REJECT"| NOTIFY_REJECT["Notification to employer:<br/>Actuary rejected the quote"]
+    ACT_DECISION -->|"ACCEPT"| NOTIFY_ACCEPT["Notification to employer:<br/>Actuary accepted!<br/>Please make payment."]
+
+    NOTIFY_REJECT --> PICK_NEW["Employer picks<br/>another actuary"]
+    PICK_NEW --> ACT_DASH
+
+    NOTIFY_ACCEPT --> PAYMENT["Employer makes<br/>payment"]
+
+    PAYMENT --> NOTIFY_PAID["Notification to actuary:<br/>Payment completed!<br/>You can start analysis."]
+
+    NOTIFY_PAID --> PORTAL["Actuary works in<br/>dedicated portal<br/>Real-time status updates"]
+
+    PORTAL --> CERT_DELIVER["Certification delivered:<br/>1. Certification Letter<br/>2. Technical Memorandum"]
+
+    CERT_DELIVER --> VALIDATE["Platform auto-validates:<br/>MAAA credential<br/>ASOP 50 compliance<br/>60% threshold met"]
+
+    VALIDATE --> COMPLETE["MV CERTIFIED<br/>IRS compliant<br/>Audit-ready"]
+
+    style MEC_PASS fill:#059669,color:#fff,stroke:none
+    style MV_START fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style PASS fill:#059669,color:#fff,stroke:none
+    style FAIL fill:#dc2626,color:#fff,stroke:none
+    style BANNER fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style MARKET fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style COMPLETE fill:#059669,color:#fff,stroke:none
+    style SAFE_HARBOR fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style EXPORT_PASS fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style DIRECTORY fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style ACT_DASH fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style NOTIFY_REJECT fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style NOTIFY_ACCEPT fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style PAYMENT fill:#fefce8,color:#78350f,stroke:#fde68a
+    style NOTIFY_PAID fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style VALIDATE fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+        </div>
+      </div>
+
+      <div class="note-box">
+        <strong>Three Possible Paths:</strong><br/>
+        <strong style="color:var(--success);">Path A (Green):</strong> MEC passes &rarr; HHS Calculator says 60%+ &rarr; Auto-pass &rarr; Safe Harbor Notice &rarr; Done.<br/>
+        <strong style="color:var(--purple);">Path B (Purple):</strong> MEC passes &rarr; HHS Calculator says below 60% &rarr; Actuary Marketplace &rarr; Actuary accepts &rarr; Payment &rarr; Certification &rarr; Done.<br/>
+        <strong style="color:var(--error);">Path C (Red):</strong> Actuary rejects the quote &rarr; Employer must pick another actuary and restart the quote process.<br/>
+        All successful paths end with IRS-audit-ready documentation.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 2. WHAT IS MV -->
+    <!-- ============================================================ -->
+    <div class="section" id="s2">
+      <h2><span class="num">2</span> What Is Minimum Value? &mdash; The Two Requirements</h2>
+      <p class="subtitle">Under the ACA, a plan meets the Minimum Value standard if it covers at least 60% of the total allowed cost of benefits expected to be incurred under the plan. This ensures employer-sponsored plans provide meaningful financial protection for employees.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    MEC["Plan passed MEC<br/>(confirmed as a<br/>real health plan)"] --> MV["Now test:<br/>MINIMUM VALUE"]
+
+    MV --> REQ["THE REQUIREMENT<br/>Actuarial Value at least 60%<br/>Plan must cover at least 60%<br/>of total allowed costs<br/>for a standard population"]
+
+    REQ --> HOW["How to test:<br/>HHS MV Calculator (free)<br/>OR Actuarial Certification"]
+
+    HOW --> RESULT{AV at least 60%?}
+
+    RESULT -->|"YES"| MV_PASS["MEETS MINIMUM VALUE<br/>Employer avoids 4980H b<br/>penalty"]
+    RESULT -->|"NO"| MV_FAIL["FAILS MINIMUM VALUE<br/>4980H b risk:<br/>$4,350 per employee<br/>who gets marketplace subsidy"]
+
+    style MEC fill:#059669,color:#fff,stroke:none
+    style REQ fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style MV_PASS fill:#059669,color:#fff,stroke:none
+    style MV_FAIL fill:#dc2626,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <div class="callout-grid">
+        <div class="callout-card" style="background:var(--teal-bg); border-color:#5eead4;">
+          <h4 style="color:var(--teal);">The One Requirement</h4>
+          <div class="big" style="color:var(--teal);">60%+</div>
+          <p>The plan must cover at least 60% of total allowed costs for a standard population. The employee pays the remaining 40% or less through deductibles, copays, and coinsurance.</p>
+          <p style="margin-top:4px; font-weight:600;">This is the only test. If AV is 60% or above, the plan passes MV.</p>
+        </div>
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:var(--error);">Penalty for Failing MV</h4>
+          <div class="big" style="color:var(--error);">$4,350/yr</div>
+          <p>Per employee who receives a marketplace premium tax credit subsidy. This is the IRC Section 4980H(b) "tack hammer" penalty.</p>
+        </div>
+        <div class="callout-card" style="background:var(--accent-bg); border-color:#93c5fd;">
+          <h4 style="color:var(--primary);">Starts After MEC</h4>
+          <div class="big" style="color:var(--primary);">MEC &rarr; MV</div>
+          <p>MV testing only happens <em>after</em> the plan passes MEC. MEC checks if the plan is real. MV checks if the plan is good enough (covers 60%+ of costs).</p>
+        </div>
+      </div>
+
+      <div class="teal-box">
+        <strong>MEC vs MV:</strong> MEC (Minimum Essential Coverage) tests whether you have a <em>real</em> health plan. MV (Minimum Value) tests whether that plan is <em>good enough</em> &mdash; specifically, whether it covers at least 60% of expected costs. A plan can pass MEC but fail MV. If it fails MV, employees who go to the marketplace and get subsidized coverage will trigger penalties for the employer.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. HHS MV CALCULATOR -->
+    <!-- ============================================================ -->
+    <div class="section" id="s3">
+      <h2><span class="num">3</span> The HHS MV Calculator: What It Is &amp; What You Enter</h2>
+      <p class="subtitle">A free government Excel tool from HHS that calculates whether your plan hits the 60% MV threshold. Enter plan design details and get an instant result.</p>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    TOOL["HHS MV Calculator<br/>Free Excel tool from CMS<br/>xlsm file, macro-enabled"] --> ENTER["Enter plan<br/>design details"]
+
+    ENTER --> F1["Annual Deductible<br/>Individual: $1,000 - $7,000<br/>Family: $2,000 - $14,000"]
+    ENTER --> F2["Out-of-Pocket Maximum<br/>MOOP Individual<br/>MOOP Family"]
+    ENTER --> F3["Office Visit Copay<br/>Primary care: $20 - $50<br/>Specialist: $40 - $75"]
+    ENTER --> F4["Emergency Room Copay<br/>$250 - $500 typical"]
+    ENTER --> F5["Rx Copays<br/>Generic: $10<br/>Preferred brand: $50<br/>Specialty: $100+"]
+    ENTER --> F6["Coinsurance Rate<br/>20% - 30% typical<br/>after deductible"]
+    ENTER --> F7["Hospital Admission<br/>Copay: $250 - $500<br/>per admission"]
+
+    F1 --> CALC["Calculator runs<br/>claims simulation<br/>against standard<br/>population"]
+    F2 --> CALC
+    F3 --> CALC
+    F4 --> CALC
+    F5 --> CALC
+    F6 --> CALC
+    F7 --> CALC
+
+    CALC --> OUTPUT{Result?}
+
+    OUTPUT -->|"60%+"| PASS["62.3% MV - PASS<br/>Plan meets MV threshold"]
+    OUTPUT -->|"Below 60%"| FAIL["58.1% MV - FAIL<br/>Plan does not meet MV"]
+
+    style TOOL fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style PASS fill:#059669,color:#fff,stroke:none
+    style FAIL fill:#dc2626,color:#fff,stroke:none
+    style CALC fill:#f1f5f9,color:#475569,stroke:#e2e8f0
+        </div>
+      </div>
+
+      <h3 class="sub">Every Field You Enter Into the HHS Calculator</h3>
+      <table class="ref">
+        <thead><tr><th>Field</th><th>What It Is</th><th>Where to Find It</th><th>Typical Range</th><th>Impact on MV</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Annual Deductible (Individual)</strong></td>
+            <td>Amount employee pays before insurance kicks in</td>
+            <td>SBC page 1, "Deductible" row</td>
+            <td>$1,000 &ndash; $7,000</td>
+            <td style="color:var(--error);">Higher deductible = lower MV</td>
+          </tr>
+          <tr>
+            <td><strong>Annual Deductible (Family)</strong></td>
+            <td>Combined deductible for family coverage</td>
+            <td>SBC page 1, "Deductible" &rarr; Family column</td>
+            <td>$2,000 &ndash; $14,000</td>
+            <td style="color:var(--error);">Higher = lower MV</td>
+          </tr>
+          <tr>
+            <td><strong>Out-of-Pocket Maximum (Individual)</strong></td>
+            <td>Most an individual pays in a year (deductibles + copays + coinsurance, excluding premiums)</td>
+            <td>SBC page 1, "Out-of-Pocket Limit"</td>
+            <td>$4,000 &ndash; $9,200</td>
+            <td style="color:var(--success);">Lower MOOP = higher MV (plan pays more after cap)</td>
+          </tr>
+          <tr>
+            <td><strong>Out-of-Pocket Maximum (Family)</strong></td>
+            <td>Combined OOP max for family</td>
+            <td>SBC page 1, "Out-of-Pocket Limit" &rarr; Family</td>
+            <td>$8,000 &ndash; $18,400</td>
+            <td style="color:var(--success);">Lower = higher MV</td>
+          </tr>
+          <tr>
+            <td><strong>Office Visit Copay (Primary Care)</strong></td>
+            <td>Fixed amount for a doctor visit</td>
+            <td>SBC, "Primary care visit" row</td>
+            <td>$20 &ndash; $50</td>
+            <td>Lower copay = slightly higher MV</td>
+          </tr>
+          <tr>
+            <td><strong>Specialist Copay</strong></td>
+            <td>Fixed amount for specialist visit</td>
+            <td>SBC, "Specialist visit" row</td>
+            <td>$40 &ndash; $75</td>
+            <td>Lower copay = slightly higher MV</td>
+          </tr>
+          <tr>
+            <td><strong>Emergency Room Copay</strong></td>
+            <td>Fixed amount per ER visit</td>
+            <td>SBC, "Emergency room" row</td>
+            <td>$250 &ndash; $500</td>
+            <td>Moderate impact on MV</td>
+          </tr>
+          <tr>
+            <td><strong>Hospital Admission Copay</strong></td>
+            <td>Fixed amount per inpatient stay</td>
+            <td>SBC, "Hospital stay" row</td>
+            <td>$250 &ndash; $500</td>
+            <td>Moderate impact on MV</td>
+          </tr>
+          <tr>
+            <td><strong>Prescription Drug Copays</strong></td>
+            <td>Tiered copays: generic, preferred brand, non-preferred, specialty</td>
+            <td>SBC, "Generic/Preferred/Non-preferred drugs" rows</td>
+            <td>Generic: $10<br/>Brand: $50<br/>Specialty: $100+</td>
+            <td>Significant impact &mdash; Rx is a large cost category</td>
+          </tr>
+          <tr>
+            <td><strong>Coinsurance Rate</strong></td>
+            <td>Percentage employee pays after deductible</td>
+            <td>SBC, common pattern in coverage details</td>
+            <td>20% &ndash; 30%</td>
+            <td style="color:var(--error);">Higher coinsurance = lower MV (employee pays more)</td>
+          </tr>
+          <tr>
+            <td><strong>HSA/HRA Employer Contribution</strong></td>
+            <td>Employer's annual contribution to employee's tax-advantaged account</td>
+            <td>Employer benefits records (not on SBC)</td>
+            <td>$0 &ndash; $2,000</td>
+            <td style="color:var(--success);">Higher contribution = higher MV (counts toward plan value)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="form-mock"><span class="title">ACA Minimum Value Calculator</span>
+<span class="divider">---------------------------------------------</span>
+<span class="label"> Deductible (Indiv):</span>  <span class="val">[  $2,500  ]</span>
+<span class="label"> Family Deduct:     </span>  <span class="val">[  $5,000  ]</span>
+<span class="label"> OOP Max (Indiv):   </span>  <span class="val">[  $7,500  ]</span>
+<span class="label"> OOP Max (Family):  </span>  <span class="val">[ $15,000  ]</span>
+<span class="label"> Office Visit:      </span>  <span class="val">[  $   30  ]</span>
+<span class="label"> Specialist:        </span>  <span class="val">[  $   50  ]</span>
+<span class="label"> ER Copay:          </span>  <span class="val">[  $  350  ]</span>
+<span class="label"> Hospital Copay:    </span>  <span class="val">[  $  350  ]</span>
+<span class="label"> Rx Generic:        </span>  <span class="val">[  $   10  ]</span>
+<span class="label"> Rx Brand:          </span>  <span class="val">[  $   50  ]</span>
+<span class="label"> Coinsurance:       </span>  <span class="val">[    20%   ]</span>
+<span class="label"> HSA/HRA Contrib:   </span>  <span class="val">[  $  500  ]</span>
+<span class="divider">---------------------------------------------</span>
+ <span class="result-pass">[  CALCULATE MV  ]</span>
+
+ Result: <span class="result-pass">62.3% MV  -  PASS</span>
+</div>
+
+      <div class="note-box">
+        <strong>About the HHS MV Calculator:</strong> This is an official .xlsm (macro-enabled Excel) file published by CMS at cms.gov. It is approximately 4MB and uses actuarial claims data to simulate what percentage of costs the plan would cover for a standard population. The calculator is updated annually with new claims data and threshold adjustments.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 4. PRODUCT IMPLEMENTATION: 5 STEPS -->
+    <!-- ============================================================ -->
+    <div class="section" id="s4">
+      <h2><span class="num">4</span> Product Implementation: 5 Steps to Build MV Testing</h2>
+      <p class="subtitle">How the MV calculator is implemented in the CompliCore platform</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart LR
+    S1["STEP 1<br/>Download HHS Excel<br/>Host on server"] --> S2["STEP 2<br/>Build input form<br/>matching Excel cells"]
+    S2 --> S3["STEP 3<br/>Auto-populate<br/>from carrier feeds"]
+    S3 --> S4["STEP 4<br/>Run calculation<br/>Display result"]
+    S4 --> S5["STEP 5<br/>Export PDF<br/>MV Calculator Results"]
+
+    style S1 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style S2 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style S3 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style S4 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style S5 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+        </div>
+      </div>
+
+      <table class="ref">
+        <thead><tr><th>Step</th><th>What</th><th>Details</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Download &amp; Host</strong></td>
+            <td>Get the official .xlsm file from CMS.gov (4MB, macro-enabled Excel). Host on your server.</td>
+            <td>The HHS MV Calculator is published annually. The platform stores the latest version and maps its cell references to the web form.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Build Input Form</strong></td>
+            <td>Build a web form matching the Excel cell inputs exactly.</td>
+            <td>Each field in the web form maps to a specific cell in the Excel workbook. The form validates ranges (e.g., deductible cannot be negative, coinsurance must be 0-100%).</td>
+          </tr>
+          <tr>
+            <td><strong>3. Auto-Populate</strong></td>
+            <td>Auto-populate from carrier feeds (JSON/XML) via SFTP or API.</td>
+            <td>Insurance carriers send plan design data electronically. The platform parses the feed and pre-fills the calculator form. The employer can also upload an SBC (PDF) for AI-based extraction.</td>
+          </tr>
+          <tr>
+            <td><strong>4. Run Calculation</strong></td>
+            <td>Port the Excel VBA math to a real-time web calculation (3 seconds max).</td>
+            <td>Displays result as: "62.3% MV &mdash; PASS" (green) or "58.1% MV &mdash; FAIL" (red). Shows breakdown of how each cost-sharing element contributes to the AV percentage.</td>
+          </tr>
+          <tr>
+            <td><strong>5. Export PDF</strong></td>
+            <td>Generate IRS-audit-ready PDF: "MV Calculator Results 1/1/2026"</td>
+            <td>PDF includes: plan design inputs, calculation methodology, AV result, PASS/FAIL determination, date, and MV Safe Harbor Notice if applicable.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 5. USER UPLOADS SBC -->
+    <!-- ============================================================ -->
+    <div class="section" id="s5">
+      <h2><span class="num">5</span> Step 1: User Uploads SBC / Enters Plan Data</h2>
+      <p class="subtitle">The employer's starting point: provide plan design data for MV testing</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    LOGIN["Employer logs into<br/>CompliCore"] --> CTA["Clicks: Test My<br/>Health Plans"]
+
+    CTA --> METHOD{How to provide<br/>plan data?}
+
+    METHOD -->|"Upload SBC"| UPLOAD["Upload SBC PDF<br/>Drag and drop zone<br/>AI extracts plan details<br/>in 30 seconds"]
+    METHOD -->|"Manual Entry"| FORM["Fill in plan<br/>design form<br/>11 fields"]
+    METHOD -->|"Carrier Feed"| AUTO["Auto-populated<br/>from carrier<br/>JSON/XML feed"]
+
+    UPLOAD --> REVIEW["Review extracted data<br/>Confirm or edit values"]
+    FORM --> REVIEW
+    AUTO --> REVIEW
+
+    REVIEW --> RUN["Run MV Calculator"]
+
+    style UPLOAD fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style FORM fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style AUTO fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+    style RUN fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <div class="how-to">
+        <h5>Three Ways to Input Plan Data</h5>
+        <ol>
+          <li><strong>Upload SBC (PDF):</strong> Drag-and-drop the Summary of Benefits and Coverage document. AI parses the PDF and extracts deductibles, copays, coinsurance, OOP maximums automatically. The employer reviews and confirms.</li>
+          <li><strong>Manual Entry:</strong> Fill in the 11 fields directly in the web form (deductible, OOP max, copays, coinsurance, Rx, HSA/HRA). Best when SBC is not available.</li>
+          <li><strong>Carrier Feed (Auto):</strong> If the employer's insurance carrier sends plan data via API/SFTP, the form is pre-filled automatically. The employer just clicks "Calculate."</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 6. CALCULATOR RESULT -->
+    <!-- ============================================================ -->
+    <div class="section" id="s6">
+      <h2><span class="num">6</span> Step 2: HHS Calculator Runs &mdash; PASS or FAIL</h2>
+      <p class="subtitle">The calculator produces an actuarial value percentage. Two possible outcomes.</p>
+
+      <div class="callout-grid">
+        <div class="callout-card" style="background:#ecfdf5; border-color:#a7f3d0;">
+          <h4 style="color:var(--success);">PASS: 60% or Above</h4>
+          <div class="big" style="color:var(--success);">62.3% MV</div>
+          <p>Plan meets Minimum Value.</p>
+          <p>Generate MV Safe Harbor Notice.</p>
+          <p>Export PDF for records.</p>
+          <p style="margin-top:6px; font-weight:600; color:#065f46;">No further action needed.</p>
+        </div>
+        <div class="callout-card" style="background:#fef2f2; border-color:#fecaca;">
+          <h4 style="color:var(--error);">FAIL: Below 60%</h4>
+          <div class="big" style="color:var(--error);">58.2% MV</div>
+          <p>Plan does NOT meet Minimum Value.</p>
+          <p>Red banner: "Calculator cannot certify."</p>
+          <p>Blue button: "Get Actuarial Quote"</p>
+          <p style="margin-top:6px; font-weight:600; color:#991b1b;">Actuarial certification required.</p>
+        </div>
+      </div>
+
+      <div class="scenario-box">
+        <h5>Example Walkthrough: FAIL Scenario</h5>
+        <p><strong>1.</strong> Employer logs into platform &rarr; "Test My Health Plans"</p>
+        <p><strong>2.</strong> Uploads Summary of Benefits (SBC.pdf)</p>
+        <p><strong>3.</strong> Platform runs HHS MV Calculator automatically</p>
+        <p><strong>4.</strong> Result: <strong style="color:#dc2626;">58.2% MV &mdash; FAIL</strong></p>
+        <p><strong>5.</strong> <strong style="color:#dc2626;">Red banner appears:</strong> "Calculator cannot process. Actuarial certification required."</p>
+        <p><strong>6.</strong> <strong style="color:#1e40af;">Blue button lights up:</strong> "Get Actuarial Quote &rarr; FREE"</p>
+      </div>
+
+      <div class="warn-box">
+        <strong>When the Calculator Cannot Process:</strong> Some non-standard plan designs (narrow networks, integrated HRAs, complex tiered structures, reference-based pricing) cannot be evaluated by the HHS Excel tool. In these cases, the only path to MV compliance is actuarial certification by a credentialed actuary.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 7. ACTUARY MARKETPLACE -->
+    <!-- ============================================================ -->
+    <div class="section" id="s7">
+      <h2><span class="num">7</span> When MV Fails: The Actuary Marketplace Opens</h2>
+      <p class="subtitle">Actuarial Certification verifies ACA Minimum Value through a credentialed actuary when the HHS calculator cannot process non-standard plan designs.</p>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    FAIL["MV Calculator: FAIL<br/>or Cannot Process"] --> CLICK["Employer clicks<br/>Get Actuarial Quote"]
+
+    CLICK --> MARKET["Actuary Marketplace<br/>Curated directory of<br/>500+ MAAA actuaries"]
+
+    MARKET --> FILTERS["Filter by:<br/>Location<br/>Price Range: $2k - $8k<br/>Turnaround: 1-4 weeks<br/>ACA Experience"]
+
+    FILTERS --> SORT["Sort by:<br/>Rating<br/>Speed<br/>ACA Experience"]
+
+    SORT --> TOP3["Top 3 Matches<br/>AI-selected based on<br/>plan type and budget"]
+
+    TOP3 --> A1["Jane Doe MAAA<br/>5 stars - 98% - 247 jobs<br/>$3,200 - 2 weeks"]
+    TOP3 --> A2["Mike Chen MAAA<br/>4 stars - 95% - 189 jobs<br/>$2,800 - 3 weeks"]
+    TOP3 --> A3["Sarah Patel MAAA<br/>5 stars - 99% - 312 jobs<br/>$4,200 - 10 days"]
+
+    A1 --> SELECT["Employer views profile<br/>Client testimonials<br/>Sample certifications<br/>IRS audit success rate"]
+    A2 --> SELECT
+    A3 --> SELECT
+
+    SELECT --> QUOTE_REQ["Clicks: Send<br/>Quote Request"]
+
+    style FAIL fill:#dc2626,color:#fff,stroke:none
+    style MARKET fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style TOP3 fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style A1 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style A2 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style A3 fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+        </div>
+      </div>
+
+      <div class="how-to">
+        <h5>What the Employer Sees</h5>
+        <ol>
+          <li>Clicks "Get Actuarial Quote" (blue button from the fail screen)</li>
+          <li>Actuary Marketplace opens with a curated directory of 500+ MAAA-credentialed actuaries</li>
+          <li>Filter dropdowns: Location, Price Range ($2k&ndash;$8k), Turnaround (1&ndash;4 weeks)</li>
+          <li>Sort by: Rating, Speed, ACA Experience</li>
+          <li>Top 3 matches are AI-highlighted based on the employer's plan type and budget</li>
+          <li>Each profile shows: client testimonials, sample certifications, IRS audit success rate</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 8. QUOTES, ACCEPT/REJECT, PAYMENT -->
+    <!-- ============================================================ -->
+    <div class="section" id="s8">
+      <h2><span class="num">8</span> Step 3: Quote Sent &mdash; Actuary Accept/Reject &amp; Payment Flow</h2>
+      <p class="subtitle">After the employer sends quote requests, each actuary sees it on their dashboard. The actuary can accept or reject. This triggers a notification chain that ends with payment and analysis start.</p>
+
+      <h3 class="sub">Document Upload &amp; Quote Dispatch</h3>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    REQ["Employer clicks<br/>Send Quote Request"] --> DRAG["Drag-and-drop zone opens:<br/>Upload insurance<br/>documents here"]
+
+    DRAG --> DOCS["Employer uploads:<br/>SBC.pdf +<br/>Summary Plan Description"]
+
+    DOCS --> AI["AI Document Processing<br/>30 seconds"]
+
+    AI --> EXTRACT["Auto-extracted data:<br/>Plan type, deductibles,<br/>copays, network type,<br/>Rx tiers, OOP limits"]
+
+    EXTRACT --> SEND["Platform sends docs +<br/>AI-extracted details to<br/>top 3 matched actuaries"]
+
+    SEND --> ACT_DASH["Quote appears on each<br/>Actuary Dashboard under<br/>Action Required section"]
+
+    style AI fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style ACT_DASH fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+        </div>
+      </div>
+
+      <h3 class="sub">The Actuary Dashboard</h3>
+      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">When an actuary logs into the system, they see their dedicated dashboard with key metrics, action items, and recent activity.</p>
+
+      <div class="callout-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="callout-card" style="background:#f8fafc;">
+          <h4>Active Projects</h4>
+          <div class="big">2</div>
+          <p>1 pending review</p>
+        </div>
+        <div class="callout-card" style="background:#f8fafc;">
+          <h4>Completed</h4>
+          <div class="big">2</div>
+          <p>All time certifications</p>
+        </div>
+        <div class="callout-card" style="background:#f8fafc;">
+          <h4>Total Earned</h4>
+          <div class="big">$6,300</div>
+          <p>$7,300 pending</p>
+        </div>
+        <div class="callout-card" style="background:#f8fafc;">
+          <h4>Rating</h4>
+          <div class="big">4.9 &#9733;</div>
+          <p>Based on 248 reviews</p>
+        </div>
+      </div>
+
+      <div class="warn-box" style="margin-top:16px;">
+        <strong>Action Required (Yellow Section on Dashboard):</strong><br/>
+        <strong>Gold PPO 2026</strong> &mdash; Tech Solutions Inc. &bull; MV-2026-00098 &bull; Deadline: Feb 15, 2026<br/>
+        The actuary sees a <strong>"Review"</strong> button next to each pending quote request. Clicking it opens the full plan details and gives two options: <strong>Accept</strong> or <strong>Reject</strong>.
+      </div>
+
+      <div class="how-to" style="margin-top:16px;">
+        <h5>Actuary Dashboard Sidebar Navigation</h5>
+        <ul>
+          <li><strong>Dashboard</strong> &mdash; Overview with stats, action items, and recent activity</li>
+          <li><strong>My Projects</strong> &mdash; All accepted projects with status tracking</li>
+          <li><strong>Earnings</strong> &mdash; Payment history and pending amounts</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:16px; font-size:13px; color:var(--muted);">
+        <strong>Recent Activity Feed on Actuary Dashboard:</strong>
+        <ul style="margin-top:8px; padding-left:18px; font-size:12px;">
+          <li>New project received: Gold PPO 2026 &mdash; Tech Solutions Inc. <span style="color:var(--muted);">(2 hours ago)</span></li>
+          <li>Certification delivered: Bronze HDHP 2026 &mdash; City Motors LLC <span style="color:var(--muted);">(3 days ago)</span></li>
+          <li>Payment received: $2,800 for MV-2026-00087 <span style="color:var(--muted);">(3 days ago)</span></li>
+          <li>New review: &#9733;&#9733;&#9733;&#9733;&#9733; from Green Valley Schools <span style="color:var(--muted);">(1 week ago)</span></li>
+          <li>Message from ABC Restaurant Group regarding Silver HMO <span style="color:var(--muted);">(1 week ago)</span></li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Accept / Reject Decision &amp; Notification Flow</h3>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    DASH["Actuary Dashboard<br/>Action Required:<br/>New quote request"] --> REVIEW["Actuary clicks Review<br/>Opens plan details,<br/>quote amount, deadline"]
+
+    REVIEW --> DECISION{Actuary decides:<br/>Accept or Reject?}
+
+    DECISION -->|"REJECT"| NOTIFY_R["NOTIFICATION to<br/>Employer Dashboard:<br/>Actuary has rejected<br/>the quote request"]
+    DECISION -->|"ACCEPT"| NOTIFY_A["NOTIFICATION to<br/>Employer Dashboard:<br/>Actuary accepted!<br/>Please make payment."]
+
+    NOTIFY_R --> EMPLOYER_R["Employer sees rejection<br/>notification on their<br/>dashboard"]
+    EMPLOYER_R --> PICK_NEW["Employer must choose<br/>another actuary<br/>from the marketplace"]
+    PICK_NEW --> SEND_NEW["New quote request<br/>sent to different actuary"]
+    SEND_NEW --> DASH2["New actuary receives<br/>quote on their dashboard"]
+
+    NOTIFY_A --> EMPLOYER_A["Employer sees acceptance<br/>notification on their<br/>dashboard with payment link"]
+    EMPLOYER_A --> PAYMENT["Employer makes payment<br/>($2,000 - $8,000<br/>depending on actuary)"]
+
+    PAYMENT --> CONFIRM["Payment confirmed<br/>by the platform"]
+
+    CONFIRM --> NOTIFY_PAID["NOTIFICATION to<br/>Actuary Dashboard:<br/>Payment completed!<br/>You can now start<br/>analysis."]
+
+    NOTIFY_PAID --> START_WORK["Actuary can now<br/>begin MV analysis<br/>in their portal"]
+
+    style DASH fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style DASH2 fill:#ede9fe,color:#5b21b6,stroke:#c4b5fd
+    style NOTIFY_R fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style NOTIFY_A fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style EMPLOYER_R fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style PICK_NEW fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style PAYMENT fill:#fefce8,color:#78350f,stroke:#fde68a
+    style NOTIFY_PAID fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+    style START_WORK fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <h3 class="sub">The 3 Actuary Quotes</h3>
+      <div class="callout-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="quote-card" style="border-color: #93c5fd; border-width: 2px;">
+          <div class="cred">MAAA Certified</div>
+          <div class="name">Jane Doe</div>
+          <div class="price">$3,200</div>
+          <div class="details">
+            <span>Deliver: February 5, 2026 (2 weeks)</span>
+            <span>Narrow network specialist</span>
+            <span>247 prior certifications</span>
+            <span>IRS audit success: 100%</span>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="cred">MAAA Certified</div>
+          <div class="name">Mike Chen</div>
+          <div class="price">$2,800</div>
+          <div class="details">
+            <span>Deliver: February 8, 2026 (3 weeks)</span>
+            <span>Standard turnaround</span>
+            <span>189 prior certifications</span>
+            <span>IRS audit success: 98%</span>
+          </div>
+        </div>
+        <div class="quote-card">
+          <div class="cred">MAAA Certified</div>
+          <div class="name">Sarah Patel</div>
+          <div class="price">$4,200</div>
+          <div class="details">
+            <span>Deliver: February 2, 2026 (10 days)</span>
+            <span>Audit guarantee included</span>
+            <span>312 prior certifications</span>
+            <span>IRS audit success: 100%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="note-box" style="margin-top:16px;">
+        <strong>What "Deliver" Means:</strong> The delivery date is when the actuary uploads the final signed certification package to your platform dashboard, including: (1) Certification Letter (1 page), (2) Technical Memorandum (5&ndash;10 pages), and (3) IRS-ready files for audit defense.
+      </div>
+
+      <h3 class="sub">Notification Summary Table</h3>
+      <table class="ref">
+        <thead><tr><th>Event</th><th>Who Gets Notified</th><th>Notification Content</th><th>Next Action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Quote sent by employer</strong></td>
+            <td>Actuary Dashboard</td>
+            <td>"New project received: [Plan Name] &mdash; [Employer Name]" with a "Review" button</td>
+            <td>Actuary reviews and decides Accept/Reject</td>
+          </tr>
+          <tr>
+            <td style="color:#dc2626; font-weight:600;">Actuary REJECTS</td>
+            <td>Employer Dashboard</td>
+            <td>"[Actuary Name] has rejected your quote request for [Plan Name]"</td>
+            <td>Employer must select another actuary from marketplace</td>
+          </tr>
+          <tr>
+            <td style="color:#059669; font-weight:600;">Actuary ACCEPTS</td>
+            <td>Employer Dashboard</td>
+            <td>"[Actuary Name] accepted! Please make payment of $[amount] to proceed."</td>
+            <td>Employer clicks payment link and completes payment</td>
+          </tr>
+          <tr>
+            <td style="color:#059669; font-weight:600;">Payment completed</td>
+            <td>Actuary Dashboard</td>
+            <td>"Payment received: $[amount] for [Project ID]. You can now start analysis."</td>
+            <td>Actuary begins MV analysis in their portal</td>
+          </tr>
+          <tr>
+            <td style="color:#059669; font-weight:600;">Certification delivered</td>
+            <td>Employer Dashboard</td>
+            <td>"Certification delivered for [Plan Name]. Download your documents."</td>
+            <td>Platform runs auto-validation on the uploaded documents</td>
+          </tr>
+          <tr>
+            <td style="color:#dc2626; font-weight:600;">Validation FAILS</td>
+            <td>Actuary Dashboard</td>
+            <td>"Validation failed for [Plan Name]. Reason: [specific reason]. Please correct and resubmit."</td>
+            <td>Actuary reviews the failure reason, corrects the document, and resubmits</td>
+          </tr>
+          <tr>
+            <td style="color:#059669; font-weight:600;">Validation PASSES</td>
+            <td>Employer Dashboard</td>
+            <td>"Certification approved for [Plan Name]! MV Certified. IRS compliant. Download your documents."</td>
+            <td>Employer downloads certification letter + technical memo. Done.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 9. ACTUARY WORKS -->
+    <!-- ============================================================ -->
+    <div class="section" id="s9">
+      <h2><span class="num">9</span> Step 4: Actuary Works in Dedicated Portal (After Payment)</h2>
+      <p class="subtitle">Once payment is confirmed, the actuary receives a notification and can begin the MV analysis. The actuary has a separate portal with all tools needed.</p>
+
+      <h3 class="sub">Actuary's Workflow (Starts Only After Payment)</h3>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    PAID["Payment confirmed<br/>Notification appears<br/>on actuary dashboard"] --> LOGIN["Actuary opens project<br/>in My Projects section"]
+
+    LOGIN --> DOWNLOAD["Downloads employer's<br/>extracted plan design data"]
+
+    DOWNLOAD --> REVIEW["Reviews flagged issues:<br/>Rx deductible +<br/>narrow network confirmed"]
+
+    REVIEW --> MODEL["Runs proprietary MV model<br/>using actuarial software"]
+
+    MODEL --> ASSUMPTIONS["Documents assumptions:<br/>Used 2024 MVC claims data<br/>+ 2% trend adjustment"]
+
+    ASSUMPTIONS --> WRITE["Writes Technical<br/>Memorandum<br/>5-10 pages"]
+
+    WRITE --> CERT["Writes Certification<br/>Letter<br/>1 page"]
+
+    CERT --> UPLOAD_CERT["Uploads both documents<br/>to the platform"]
+
+    style PAID fill:#059669,color:#fff,stroke:none
+    style MODEL fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style UPLOAD_CERT fill:#059669,color:#fff,stroke:none
+        </div>
+      </div>
+
+      <h3 class="sub">Real-Time Status Updates to Employer</h3>
+      <div class="timeline">
+        <div class="step done">
+          <h4>Day 1: Payment Received &amp; Analysis Started</h4>
+          <p>"Payment confirmed. Documents received, analysis started."</p>
+          <div class="progress-bar"><div class="fill green" style="width:20%;"></div></div>
+          <p style="margin-top:4px; font-size:11px; color:var(--muted);">20% complete</p>
+        </div>
+        <div class="step done">
+          <h4>Day 5: Model Completed</h4>
+          <p>"Actuarial model completed, writing memorandum."</p>
+          <div class="progress-bar"><div class="fill green" style="width:60%;"></div></div>
+          <p style="margin-top:4px; font-size:11px; color:var(--muted);">60% complete</p>
+        </div>
+        <div class="step done">
+          <h4>Day 10: Final Review</h4>
+          <p>"Final review complete. Preparing certification documents."</p>
+          <div class="progress-bar"><div class="fill green" style="width:90%;"></div></div>
+          <p style="margin-top:4px; font-size:11px; color:var(--muted);">90% complete</p>
+        </div>
+        <div class="step active">
+          <h4>Day 14: Certification Uploaded</h4>
+          <p>"Certification documents delivered! Download your files."</p>
+          <div class="progress-bar"><div class="fill green" style="width:100%;"></div></div>
+          <p style="margin-top:4px; font-size:11px; color:var(--success); font-weight:600;">100% complete</p>
+        </div>
+      </div>
+
+      <div class="purple-box">
+        <strong>Key Point:</strong> The actuary cannot start working until payment is confirmed. This protects both parties. The employer knows the actuary has committed (by accepting), and the actuary knows the employer has paid (before starting work). The platform holds payment in escrow and releases to the actuary upon certification delivery.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 10. CERTIFICATION DELIVERED -->
+    <!-- ============================================================ -->
+    <div class="section" id="s10">
+      <h2><span class="num">10</span> Step 5: Certification Documents Delivered</h2>
+      <p class="subtitle">The actuary uploads two documents. The platform auto-validates and marks the plan as MV-certified.</p>
+
+      <h3 class="sub">Document 1: Certification Letter (1 Page)</h3>
+      <div class="cert-doc">
+        <div class="cert-title">Minimum Value Certification</div>
+        <p>I, <strong>Jane Doe, MAAA #12345</strong>, certify that the <strong>ABC Restaurant Silver HMO 2026</strong> plan meets ACA Minimum Value standards per ASOP No. 50.</p>
+        <p style="margin-top:8px;">Actuarial Value = <strong style="color:#059669; font-size:18px;">62.3%</strong></p>
+        <p>This plan provides substantial coverage for inpatient hospital services and physician services as required under IRC &sect; 36B(c)(2)(C)(ii).</p>
+        <div class="sig">/s/ Jane Doe, MAAA &mdash; February 5, 2026</div>
+      </div>
+
+      <h3 class="sub">Document 2: Technical Memorandum (5&ndash;10 Pages)</h3>
+      <div class="how-to">
+        <h5>What the Technical Memorandum Contains</h5>
+        <ul>
+          <li><strong>Methodology:</strong> How the actuary calculated AV (claims simulation, custom model, HHS calculator with adjustments)</li>
+          <li><strong>Assumptions:</strong> Claims data source (e.g., "2024 MVC claims data + 2% trend"), population modeled, service utilization rates</li>
+          <li><strong>Plan Design Summary:</strong> All cost-sharing elements used in the calculation (deductibles, copays, coinsurance, OOP max, Rx tiers)</li>
+          <li><strong>Results:</strong> AV percentage with confidence interval, sensitivity analysis showing impact of key assumptions</li>
+          <li><strong>Compliance Statement:</strong> ASOP No. 50 compliance declaration, professional credentials</li>
+        </ul>
+      </div>
+
+      <h3 class="sub">Platform Auto-Validation &amp; Resubmission Flow</h3>
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    DOCS["Actuary uploads<br/>Certification Letter +<br/>Technical Memorandum"] --> V1{MAAA credential<br/>verified?}
+
+    V1 -->|"YES"| V2{ASOP 50<br/>compliance<br/>confirmed?}
+    V1 -->|"NO"| FAIL_CRED["VALIDATION FAILED<br/>Reason: Invalid or<br/>unverified MAAA credential"]
+
+    V2 -->|"YES"| V3{60% threshold<br/>met in certification?}
+    V2 -->|"NO"| FAIL_ASOP["VALIDATION FAILED<br/>Reason: ASOP 50 reference<br/>missing or non-compliant"]
+
+    V3 -->|"YES"| APPROVED["APPROVED<br/>MV Certified<br/>IRS Compliant"]
+    V3 -->|"NO"| FAIL_AV["VALIDATION FAILED<br/>Reason: Certified AV<br/>is below 60% threshold"]
+
+    FAIL_CRED --> NOTIFY_ACT["NOTIFICATION to<br/>Actuary Dashboard:<br/>Validation failed.<br/>Reason: Invalid MAAA<br/>credential. Please<br/>resubmit with correct<br/>credential documentation."]
+    FAIL_ASOP --> NOTIFY_ACT2["NOTIFICATION to<br/>Actuary Dashboard:<br/>Validation failed.<br/>Reason: ASOP 50 compliance<br/>not confirmed in memorandum.<br/>Please update and resubmit."]
+    FAIL_AV --> NOTIFY_ACT3["NOTIFICATION to<br/>Actuary Dashboard:<br/>Validation failed.<br/>Reason: Certified AV below<br/>60% threshold. Please review<br/>and resubmit if applicable."]
+
+    NOTIFY_ACT --> RESUBMIT["Actuary reviews the<br/>failure reason, corrects<br/>the document, and<br/>resubmits"]
+    NOTIFY_ACT2 --> RESUBMIT
+    NOTIFY_ACT3 --> RESUBMIT
+
+    RESUBMIT --> DOCS
+
+    APPROVED --> NOTIFY_EMP["NOTIFICATION to<br/>Employer Dashboard:<br/>Certification approved!<br/>IRS compliant. Download<br/>your documents."]
+
+    style APPROVED fill:#059669,color:#fff,stroke:none
+    style FAIL_CRED fill:#dc2626,color:#fff,stroke:none
+    style FAIL_ASOP fill:#dc2626,color:#fff,stroke:none
+    style FAIL_AV fill:#dc2626,color:#fff,stroke:none
+    style NOTIFY_ACT fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style NOTIFY_ACT2 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style NOTIFY_ACT3 fill:#fef2f2,color:#991b1b,stroke:#fecaca
+    style RESUBMIT fill:#dbeafe,color:#1e40af,stroke:#93c5fd
+    style NOTIFY_EMP fill:#ecfdf5,color:#065f46,stroke:#a7f3d0
+        </div>
+      </div>
+
+      <h3 class="sub">Validation Failure Reasons &amp; Actuary Notifications</h3>
+      <table class="ref">
+        <thead><tr><th>Validation Check</th><th>Failure Reason</th><th>Notification to Actuary</th><th>What Actuary Must Do</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>MAAA Credential</strong></td>
+            <td>Credential number not found in MAAA registry, expired, or not provided</td>
+            <td style="color:#dc2626;">"Validation failed: Invalid or unverified MAAA credential (#[number]). Please resubmit your certification letter with a valid, current MAAA credential number."</td>
+            <td>Update the certification letter with the correct MAAA credential number and resubmit</td>
+          </tr>
+          <tr>
+            <td><strong>ASOP 50 Compliance</strong></td>
+            <td>Technical memorandum does not reference ASOP No. 50, or methodology section is missing/incomplete</td>
+            <td style="color:#dc2626;">"Validation failed: ASOP 50 compliance not confirmed. Your technical memorandum must include a compliance statement referencing Actuarial Standard of Practice No. 50. Please update and resubmit."</td>
+            <td>Add ASOP 50 compliance statement to the technical memorandum and resubmit</td>
+          </tr>
+          <tr>
+            <td><strong>60% AV Threshold</strong></td>
+            <td>The certified actuarial value in the letter is below 60%</td>
+            <td style="color:#dc2626;">"Validation failed: Certified AV of [X]% is below the 60% MV threshold. If this is an error, please correct and resubmit. If the plan genuinely does not meet 60%, the certification cannot be approved."</td>
+            <td>Review the calculation. If error, correct and resubmit. If accurate, notify the employer that the plan fails MV.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="gap-box">
+        <strong>Resubmission Loop:</strong> When validation fails, the actuary receives a notification with the <strong>specific reason</strong> for failure. The actuary corrects the issue in the document and resubmits. The platform re-runs validation automatically. This loop continues until all checks pass or the actuary communicates that the plan cannot meet MV. There is no limit on resubmissions.
+      </div>
+
+      <div class="success-box">
+        <strong>What ASOP No. 50 Is:</strong> Actuarial Standard of Practice No. 50 is the official rulebook actuaries must follow when testing if employer health plans meet ACA's 60% Minimum Value requirement. It specifies the methodology, assumptions, and documentation standards. Compliance with ASOP 50 is what makes the certification IRS-defensible.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 11. MV SAFE HARBOR NOTICES -->
+    <!-- ============================================================ -->
+    <div class="section" id="s11">
+      <h2><span class="num">11</span> MV Safe Harbor Notices &mdash; IRS Protection</h2>
+      <p class="subtitle">MV Safe Harbor Notices provide IRS protection when employers use the HHS Minimum Value Calculator. They document that you followed the calculator method properly.</p>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+flowchart TD
+    PASS["MV Calculator:<br/>60%+ PASS"] --> GENERATE["Generate MV Safe<br/>Harbor Notice"]
+
+    GENERATE --> CONTENT["Notice contains:<br/>Plan name and year<br/>AV percentage result<br/>Calculator version used<br/>Date of calculation<br/>Statement of compliance"]
+
+    CONTENT --> DISTRIBUTE["Distribute to employees<br/>within 90 days of using<br/>calculator method"]
+
+    DISTRIBUTE --> PROTECTION["IRS SAFE HARBOR<br/>Employer is protected from<br/>MV penalties if audited,<br/>as long as notice was given<br/>and calculator was used properly"]
+
+    style PASS fill:#059669,color:#fff,stroke:none
+    style PROTECTION fill:#ccfbf1,color:#0d9488,stroke:#5eead4
+        </div>
+      </div>
+
+      <div class="callout-grid">
+        <div class="callout-card" style="background:var(--teal-bg); border-color:#5eead4;">
+          <h4 style="color:var(--teal);">What Are MV Safe Harbor Notices?</h4>
+          <p><strong>Purpose:</strong> Official IRS "proof of compliance" notice stating your plan was tested using the HHS MV Calculator and achieved 60%+ Minimum Value.</p>
+        </div>
+        <div class="callout-card" style="background:var(--teal-bg); border-color:#5eead4;">
+          <h4 style="color:var(--teal);">Legal Protection</h4>
+          <p><strong>IRS Notice 2014-69:</strong> Employers using calculator + providing notice get safe harbor from MV penalties if audited.</p>
+        </div>
+        <div class="callout-card" style="background:var(--teal-bg); border-color:#5eead4;">
+          <h4 style="color:var(--teal);">Timing Requirement</h4>
+          <p><strong>90 days:</strong> Must notify employees within 90 days of using the calculator method.</p>
+        </div>
+      </div>
+
+      <div class="note-box">
+        <strong>When Safe Harbor Applies:</strong> The MV Safe Harbor Notice is specifically for employers who used the HHS MV Calculator (Path A). If MV was determined through actuarial certification (Path B), the certification documents themselves serve as the audit-ready proof &mdash; a separate safe harbor notice is not needed.
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 12. REFERENCE -->
+    <!-- ============================================================ -->
+    <div class="section" id="s12">
+      <h2><span class="num">12</span> Complete Reference: Thresholds, Legal Sources &amp; Penalties</h2>
+      <p class="subtitle">Every number, legal citation, and threshold used in the MV determination process</p>
+      <table class="ref">
+        <thead><tr><th>Item</th><th>Value</th><th>Legal Source</th></tr></thead>
+        <tbody>
+          <tr><td><strong>MV Threshold</strong></td><td>60% actuarial value</td><td>IRC &sect; 36B(c)(2)(C)(ii); ACA &sect; 1302(d)(2)</td></tr>
+          <tr><td><strong>How to Test MV</strong></td><td>HHS MV Calculator or Actuarial Certification</td><td>45 CFR &sect; 156.145(a); IRS Notice 2014-69</td></tr>
+          <tr><td><strong>HHS MV Calculator</strong></td><td>Official .xlsm tool from CMS</td><td>45 CFR &sect; 156.145(a)</td></tr>
+          <tr><td><strong>Actuarial Certification Standard</strong></td><td>ASOP No. 50</td><td>Actuarial Standards Board; IRS Notice 2014-69</td></tr>
+          <tr><td><strong>Actuary Credential Required</strong></td><td>MAAA (Member, American Academy of Actuaries)</td><td>IRS Notice 2014-69</td></tr>
+          <tr><td><strong>MV Safe Harbor Notice</strong></td><td>Must be given within 90 days of using calculator</td><td>IRS Notice 2014-69</td></tr>
+          <tr><td><strong>Penalty for Failing MV</strong></td><td>$4,350/year per affected employee (2025)</td><td>IRC &sect; 4980H(b)</td></tr>
+          <tr><td><strong>Penalty Trigger</strong></td><td>Employee receives marketplace premium tax credit</td><td>IRC &sect; 36B</td></tr>
+          <tr><td><strong>Penalty Cap</strong></td><td>4980H(b) total cannot exceed 4980H(a) amount</td><td>IRC &sect; 4980H(b)(2)</td></tr>
+          <tr><td><strong>Individual OOP Max (2025)</strong></td><td>$9,200</td><td>ACA &sect; 1302(c)(1); IRS Notice 2023-29</td></tr>
+          <tr><td><strong>Family OOP Max (2025)</strong></td><td>$18,400</td><td>ACA &sect; 1302(c)(1); IRS Notice 2023-29</td></tr>
+          <tr><td><strong>HSA/HRA Impact on MV</strong></td><td>Employer contributions count toward plan value</td><td>45 CFR &sect; 156.145(b)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="success-box" style="margin-top:20px;">
+        <strong>One-Sentence Summary:</strong><br/>
+        A plan meets Minimum Value if it covers at least 60% of total allowed costs (tested via the free HHS MV Calculator or actuarial certification under ASOP 50) and includes substantial coverage for inpatient hospital and physician services &mdash; failing MV exposes the employer to a $4,350/year penalty per employee who receives a marketplace subsidy, but employers who use the HHS calculator and issue a Safe Harbor Notice (per IRS Notice 2014-69) are protected from MV penalties if audited.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#ccfbf1',
+        primaryTextColor: '#0d9488',
+        primaryBorderColor: '#5eead4',
+        lineColor: '#94a3b8',
+        secondaryColor: '#f1f5f9',
+        tertiaryColor: '#ecfdf5',
+        fontFamily: 'Inter, -apple-system, sans-serif',
+        fontSize: '13px'
+      },
+      flowchart: { curve: 'basis', padding: 16, nodeSpacing: 30, rankSpacing: 40, htmlLabels: true }
+    });
+  </script>
+</body>
+</html>

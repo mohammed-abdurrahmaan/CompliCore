@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompliCore — ACA Compliance Flow Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8fafc; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; padding: 32px 48px; }
+        .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { font-size: 14px; opacity: 0.8; margin-top: 6px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+        .section { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); padding: 32px; margin-bottom: 28px; }
+        .section h2 { font-size: 18px; font-weight: 700; color: #312e81; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .section h2 .num { background: #4f46e5; color: white; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+        .mermaid { display: flex; justify-content: center; overflow-x: auto; }
+        .legend { display: flex; gap: 20px; flex-wrap: wrap; padding: 16px 0; border-top: 1px solid #e2e8f0; margin-top: 20px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #64748b; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+        .phase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+        .phase-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; transition: box-shadow 0.2s; }
+        .phase-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .phase-card h3 { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+        .phase-card p { font-size: 11px; color: #64748b; line-height: 1.5; }
+        .phase-card .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 6px; margin-top: 8px; }
+        .tag-green { background: #dcfce7; color: #166534; }
+        .tag-blue { background: #dbeafe; color: #1e40af; }
+        .tag-amber { background: #fef3c7; color: #92400e; }
+        .tag-purple { background: #ede9fe; color: #5b21b6; }
+        .tag-rose { background: #ffe4e6; color: #9f1239; }
+        @media print { .header { background: #1e1b4b !important; -webkit-print-color-adjust: exact; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>CompliCore — ACA Compliance Platform Flow</h1>
+    <p>Complete User Experience Flow Diagram · Entry Point → Year-End Filing → IRS Notice Response</p>
+</div>
+
+<div class="container">
+
+<!-- MASTER FLOW -->
+<div class="section">
+    <h2><span class="num">★</span> Master Compliance Flow — End to End</h2>
+    <div class="mermaid">
+flowchart TB
+    START([🏢 User Creates Account / Invited]) --> WIZARD[📋 Onboarding Wizard<br/>Company info, EIN, controlled groups,<br/>industry, prior year FTE, integrations]
+    WIZARD --> FLAGS{Special Flags?}
+    FLAGS -->|Seasonal workforce| WIZARD2[Set seasonal parameters]
+    FLAGS -->|Controlled group| WIZARD2
+    FLAGS -->|TRICARE/VA exclusions| WIZARD2
+    FLAGS -->|New employer| WIZARD3[Reasonable expectation prompt]
+    WIZARD2 --> S1
+    WIZARD3 --> S1
+    FLAGS -->|Standard| S1
+
+    S1[🔗 Step 1: Payroll Integration<br/>API connect or CSV upload]
+    S1 --> S2[📊 Step 2: ALE Status Dashboard<br/>ALE/Non-ALE, FTE averages, alerts]
+    S2 --> S3[👥 Step 3: Employee Classification<br/>Look-Back or Monthly method]
+    S3 --> S4[📋 Step 4: Offer & Coverage Tracking<br/>Mark offered/not offered, ≥95% check]
+    S4 --> S4A[📬 Step 4a: Open Enrollment<br/>Employee accept/decline]
+    S4A --> S5[💰 Step 5: Affordability Testing<br/>W-2, Rate of Pay, FPL safe harbors]
+    S5 --> S6[✅ Step 6: MEC & MV Validation<br/>HHS Calculator + Actuary Marketplace]
+    S6 --> S7[⚠️ Step 7: Penalty Simulation<br/>4980H a/b exposure modeling]
+    S7 --> S8[📄 Step 8: Year-End IRS Filing<br/>1095-C / 1094-C forms + e-file]
+    S8 --> S9[📨 Step 9: IRS Notice Response<br/>Letter 226J parsing + response]
+    S9 --> DONE([✅ Compliance Cycle Complete])
+
+    style START fill:#4f46e5,color:#fff,stroke:#4f46e5
+    style DONE fill:#059669,color:#fff,stroke:#059669
+    style S1 fill:#eff6ff,stroke:#3b82f6,color:#1e40af
+    style S2 fill:#eff6ff,stroke:#3b82f6,color:#1e40af
+    style S3 fill:#eff6ff,stroke:#3b82f6,color:#1e40af
+    style S4 fill:#eff6ff,stroke:#3b82f6,color:#1e40af
+    style S4A fill:#f0fdf4,stroke:#22c55e,color:#166534
+    style S5 fill:#fefce8,stroke:#eab308,color:#854d0e
+    style S6 fill:#faf5ff,stroke:#a855f7,color:#6b21a8
+    style S7 fill:#fff1f2,stroke:#f43f5e,color:#9f1239
+    style S8 fill:#eff6ff,stroke:#3b82f6,color:#1e40af
+    style S9 fill:#fff7ed,stroke:#f97316,color:#9a3412
+    style WIZARD fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    style FLAGS fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    </div>
+</div>
+
+<!-- STEP 1: PAYROLL -->
+<div class="section">
+    <h2><span class="num">1</span> Payroll Integration & Hour Ingestion</h2>
+    <div class="mermaid">
+flowchart LR
+    A[Connect Payroll<br/>API / CSV Upload] --> B{Data Source}
+    B -->|ADP API| C[OAuth 2.0 Connect<br/>Auto-sync monthly]
+    B -->|CSV Upload| D[Upload CSV<br/>Map columns]
+    C --> E[Ingest Hours,<br/>Wages, Classifications]
+    D --> E
+    E --> F{Errors Found?}
+    F -->|Yes| G[🔴 Error Review Queue<br/>PTO mapping, missing data]
+    F -->|No| H[✅ Data Ingested<br/>→ ALE Dashboard]
+    G -->|Fixed| H
+
+    style A fill:#dbeafe,stroke:#3b82f6
+    style H fill:#dcfce7,stroke:#22c55e
+    style G fill:#fee2e2,stroke:#ef4444
+    </div>
+</div>
+
+<!-- STEP 2: ALE -->
+<div class="section">
+    <h2><span class="num">2</span> ALE Status Dashboard</h2>
+    <div class="mermaid">
+flowchart LR
+    A[Monthly Data<br/>Ingested] --> B[Calculate FTE<br/>FT + PT÷120]
+    B --> C{Total FTE ≥ 50?}
+    C -->|Yes| D[🔴 ALE Status<br/>ACA obligations apply]
+    C -->|No| E[🟢 Non-ALE<br/>No ACA reporting required]
+    D --> F[12-Month Trailing<br/>FTE Average Chart]
+    E --> F
+    F --> G{Near Threshold?}
+    G -->|Within 5 FTE| H[🟡 Threshold Alert<br/>Nearing ALE status]
+    G -->|Safe margin| I[Continue monitoring]
+
+    style D fill:#fee2e2,stroke:#ef4444,color:#991b1b
+    style E fill:#dcfce7,stroke:#22c55e,color:#166534
+    style H fill:#fef3c7,stroke:#f59e0b,color:#92400e
+    </div>
+</div>
+
+<!-- STEP 3: CLASSIFICATION -->
+<div class="section">
+    <h2><span class="num">3</span> Employee Classification Center</h2>
+    <div class="mermaid">
+flowchart TB
+    A[HR Selects<br/>Measurement Method] --> B{Method?}
+    B -->|Look-Back| C[Set Measurement Period<br/>e.g., 12 months]
+    B -->|Monthly| D[Track Hours<br/>Monthly ≥130hrs = FT]
+    C --> E[Set Admin Period<br/>e.g., 90 days]
+    E --> F[Set Stability Period<br/>e.g., 12 months]
+    F --> G[Calculate FT/PT<br/>Based on Look-Back]
+    D --> G
+    G --> H[📊 Employee Classification Table<br/>Filterable: Name, Hours, Status, Department]
+    H --> I{Employee Status}
+    I -->|Full-Time ≥130 hrs/mo| J[🟢 FT — ACA Eligible]
+    I -->|Part-Time < 130 hrs/mo| K[⚪ PT — Not Required]
+    I -->|Variable Hours| L[🟡 Monitoring — Pending]
+
+    style J fill:#dcfce7,stroke:#22c55e
+    style K fill:#f1f5f9,stroke:#94a3b8
+    style L fill:#fef3c7,stroke:#f59e0b
+    </div>
+</div>
+
+<!-- STEP 4 + 4a: OFFER & ENROLLMENT -->
+<div class="section">
+    <h2><span class="num">4</span> Offer & Coverage Tracking + Open Enrollment</h2>
+    <div class="mermaid">
+flowchart TB
+    A[FT Employee Roster] --> B[HR Marks Coverage<br/>Offered / Not Offered Monthly]
+    B --> C{Offer Rate}
+    C -->|≥ 95%| D[🟢 Compliant]
+    C -->|< 95%| E[🔴 Non-Compliant<br/>Penalty Risk]
+
+    D --> F[Step 4a: HR Opens<br/>Enrollment Window]
+    F --> G[Set Start Date,<br/>End Date, Deadline]
+    G --> H[📢 Notify Employees<br/>In-app + Email]
+
+    H --> I[Employee Logs In<br/>Sees Action Required Banner]
+    I --> J[Reviews Plan Details<br/>Premiums, MEC, MV, Cost Breakdown]
+    J --> K{Employee Decision}
+
+    K -->|Accept| L[Select Coverage Tier<br/>→ Confirm]
+    K -->|Decline| M[Select Decline Reason<br/>→ Confirm]
+    K -->|No Response| N[⏰ 48hr Auto-Reminder]
+
+    L --> O[✅ Enrolled<br/>Timestamp Recorded]
+    M --> P[❌ Declined<br/>Reason + Timestamp]
+    N -->|Still no response| Q[⚠️ No-Response<br/>HR reviews manually]
+
+    O --> R[HR Enrollment<br/>Response Dashboard]
+    P --> R
+    Q --> R
+
+    R --> S[Batch Approve<br/>Accepted Enrollments]
+    S --> T[Generate Enrollment<br/>Proof PDFs]
+    T --> U[IRS Offer Codes<br/>Auto-Recalculate]
+
+    style D fill:#dcfce7,stroke:#22c55e
+    style E fill:#fee2e2,stroke:#ef4444
+    style O fill:#dcfce7,stroke:#22c55e
+    style P fill:#fee2e2,stroke:#ef4444
+    style Q fill:#fef3c7,stroke:#f59e0b
+    </div>
+</div>
+
+<!-- STEP 5: AFFORDABILITY -->
+<div class="section">
+    <h2><span class="num">5</span> Affordability Testing</h2>
+    <div class="mermaid">
+flowchart LR
+    A[Admin Selects<br/>Safe Harbor Method] --> B{Method}
+    B -->|W-2| C[EE Cost ≤ 9.96%<br/>of W-2 Wages]
+    B -->|Rate of Pay| D[EE Cost ≤ 9.96%<br/>of Hourly×130×12]
+    B -->|FPL| E[EE Cost ≤ $129.89/mo<br/>2026 FPL Threshold]
+    C --> F[Calculate Per<br/>FT Employee]
+    D --> F
+    E --> F
+    F --> G{Result}
+    G -->|≤ 9.96%| H[🟢 Affordable<br/>Compliant]
+    G -->|9.5%-9.96%| I[🟡 Borderline<br/>Monitor closely]
+    G -->|> 9.96%| J[🔴 Unaffordable<br/>Penalty Risk]
+
+    style H fill:#dcfce7,stroke:#22c55e
+    style I fill:#fef3c7,stroke:#f59e0b
+    style J fill:#fee2e2,stroke:#ef4444
+    </div>
+</div>
+
+<!-- STEP 6: MEC & MV + ACTUARY MARKETPLACE -->
+<div class="section">
+    <h2><span class="num">6</span> MEC & MV Validation + Actuary Marketplace</h2>
+    <div class="mermaid">
+flowchart TB
+    A[Plan Data Entry<br/>CSV/Excel/API/SFTP] --> B[MEC Eligibility Check<br/>7-Point Checklist]
+    B --> C{MEC Pass?}
+    C -->|No| D[🔴 MEC Fail<br/>Plan not qualified]
+    C -->|Yes| E[HHS MV Calculator<br/>Standard Population Method]
+    E --> F{MV ≥ 60% AND<br/>ER Contrib ≥ 60%?}
+    F -->|Yes| G[🟢 MV Pass<br/>Plan compliant]
+    F -->|No| H[🔴 MV Fail<br/>Actuarial Cert Required]
+
+    H --> I[Red Banner:<br/>Failure Reason Displayed]
+    I --> J[🔵 Get Actuarial Quote<br/>Button Illuminates]
+    J --> K[System Pre-Packages<br/>Plan Design Data]
+
+    K --> L[Step 6a: Actuary<br/>Marketplace Opens]
+    L --> M[Filter: Location, Price,<br/>Turnaround, Experience]
+    M --> N[AI Highlights<br/>Top 3 Matched Actuaries]
+    N --> O[View Profiles:<br/>Credentials, Ratings, History]
+
+    O --> P[Step 6b: Send Quote<br/>Upload SBC + SPD]
+    P --> Q[AI Document Processing<br/>Extract plan data in 30s]
+    Q --> R[Employer Reviews<br/>Extracted Data]
+
+    R --> S[Step 6c: Quotes Received<br/>Up to 3 within 24hrs]
+    S --> T[Comparison Table<br/>Price, Delivery, Guarantees]
+    T --> U[Hire Actuary<br/>→ Payment → Project Created]
+
+    U --> V[Step 6d: Progress Tracker<br/>20% → 60% → 90% → 100%]
+    V --> W[Step 6e: Certification<br/>Delivered]
+    W --> X[Auto-Validate:<br/>MAAA, ASOP 50, MV ≥60%]
+    X --> Y[🟢 Certification Approved<br/>IRS Compliant]
+    Y --> Z[MV Safe Harbor Notice<br/>PDF Generated<br/>90-day distribution reminder]
+
+    G --> Z
+
+    style G fill:#dcfce7,stroke:#22c55e
+    style D fill:#fee2e2,stroke:#ef4444
+    style H fill:#fee2e2,stroke:#ef4444
+    style Y fill:#dcfce7,stroke:#22c55e
+    style J fill:#dbeafe,stroke:#3b82f6
+    style N fill:#ede9fe,stroke:#a855f7
+    </div>
+</div>
+
+<!-- STEPS 7-9 -->
+<div class="section">
+    <h2><span class="num">7-9</span> Penalty Simulation → IRS Filing → Notice Response</h2>
+    <div class="mermaid">
+flowchart TB
+    subgraph S7 ["Step 7: Penalty Simulation Dashboard"]
+        A[CFO View] --> B[Real-time 4980H a/b<br/>Penalty Calculator]
+        B --> C[Scenario Toggles:<br/>+X employees, change premium,<br/>offer rate drops]
+        C --> D[Dynamic Exposure<br/>Visualization]
+    end
+
+    subgraph S8 ["Step 8: Year-End IRS Filing"]
+        E[Auto-Map All Months<br/>to 1095-C Forms] --> F[Revalidate<br/>Lines 14/15/16]
+        F --> G{Output Format}
+        G -->|PDF| H[Download PDF Forms]
+        G -->|XML| I[Export AIR XML<br/>for e-Filing]
+        G -->|In-App| J[E-File Directly]
+        H --> K[Deadline Banners<br/>Days Remaining]
+        I --> K
+        J --> K
+        K --> L{Filing Status}
+        L -->|Accepted| M[🟢 Filed Successfully]
+        L -->|Rejected| N[🔴 Exception Workflow<br/>Review & Resubmit]
+    end
+
+    subgraph S9 ["Step 9: IRS Notice Response"]
+        O[Upload IRS<br/>Letter 226J] --> P[OCR Parses &<br/>Matches Employees]
+        P --> Q[Response Draft<br/>Auto-Generated]
+        Q --> R[Admin Reviews<br/>& Edits]
+        R --> S[Formally Submit<br/>Response]
+        S --> T[Track Status<br/>Until Resolution]
+    end
+
+    D --> E
+    M --> O
+    N --> O
+
+    style M fill:#dcfce7,stroke:#22c55e
+    style N fill:#fee2e2,stroke:#ef4444
+    </div>
+</div>
+
+<!-- LEGEND -->
+<div class="section">
+    <h2>Phase Summary</h2>
+    <div class="phase-grid">
+        <div class="phase-card" style="border-left: 4px solid #4f46e5;">
+            <h3>🏢 Onboarding</h3>
+            <p>Account creation, company setup wizard, EIN, controlled groups, integrations, seasonal/TRICARE flags</p>
+            <span class="tag tag-blue">Entry Point</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #3b82f6;">
+            <h3>🔗 Step 1: Payroll Integration</h3>
+            <p>API connect (ADP) or CSV upload. Auto-ingest hours, wages, classifications monthly. PTO mapping, error flagging.</p>
+            <span class="tag tag-blue">Data Ingestion</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #3b82f6;">
+            <h3>📊 Step 2: ALE Dashboard</h3>
+            <p>ALE/Non-ALE status, 12-month FTE trailing average, threshold alerts (red/yellow/green).</p>
+            <span class="tag tag-blue">Status Monitor</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #3b82f6;">
+            <h3>👥 Step 3: Classification</h3>
+            <p>Look-Back or Monthly method. Measurement/admin/stability periods. FT/PT designation table.</p>
+            <span class="tag tag-blue">Workforce</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #22c55e;">
+            <h3>📋 Step 4: Offer Tracking</h3>
+            <p>Mark coverage offered/not monthly. Real-time offer %, dependent coverage tracking. ≥95% compliance check.</p>
+            <span class="tag tag-green">Compliance</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #22c55e;">
+            <h3>📬 Step 4a: Open Enrollment</h3>
+            <p>HR opens window → employees notified → accept/decline with tier selection → 48hr reminders → HR approval → proof PDFs → IRS codes recalculate.</p>
+            <span class="tag tag-green">Enrollment</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #eab308;">
+            <h3>💰 Step 5: Affordability</h3>
+            <p>W-2, Rate of Pay, FPL safe harbors. Per-employee calculation. Red/yellow/green status bars.</p>
+            <span class="tag tag-amber">Testing</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #a855f7;">
+            <h3>✅ Step 6: MEC & MV</h3>
+            <p>7-point MEC check, HHS MV calculator. MV fail → Actuary Marketplace → AI matching → quote → certification → validation.</p>
+            <span class="tag tag-purple">Validation</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #f43f5e;">
+            <h3>⚠️ Step 7: Penalty Simulation</h3>
+            <p>CFO view with dynamic 4980H(a)/(b) calculator. Scenario toggles for workforce/premium changes.</p>
+            <span class="tag tag-rose">Risk</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #3b82f6;">
+            <h3>📄 Step 8: IRS Filing</h3>
+            <p>1095-C/1094-C auto-generation. PDF download, AIR XML export, or in-app e-file. Deadline banners, rejection handling.</p>
+            <span class="tag tag-blue">Filing</span>
+        </div>
+        <div class="phase-card" style="border-left: 4px solid #f97316;">
+            <h3>📨 Step 9: Notice Response</h3>
+            <p>Upload Letter 226J → OCR parse → auto-match employees → draft response → submit → track resolution.</p>
+            <span class="tag tag-amber">Response</span>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#dcfce7; border: 1px solid #22c55e;"></div> Compliant / Pass</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fef3c7; border: 1px solid #f59e0b;"></div> Warning / Borderline</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fee2e2; border: 1px solid #ef4444;"></div> Fail / Penalty Risk</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#dbeafe; border: 1px solid #3b82f6;"></div> Action / Process</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ede9fe; border: 1px solid #a855f7;"></div> AI-Powered</div>
+    </div>
+</div>
+
+</div>
+
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'base',
+        themeVariables: {
+            primaryColor: '#eff6ff',
+            primaryBorderColor: '#3b82f6',
+            primaryTextColor: '#1e293b',
+            lineColor: '#94a3b8',
+            secondaryColor: '#f1f5f9',
+            tertiaryColor: '#faf5ff',
+            fontSize: '13px',
+            fontFamily: 'Segoe UI, system-ui, sans-serif',
+        },
+        flowchart: {
+            curve: 'basis',
+            padding: 15,
+            nodeSpacing: 30,
+            rankSpacing: 40,
+            htmlLabels: true,
+        }
+    });
+</script>
+
+</body>
+</html>

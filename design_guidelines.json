@@ -1,0 +1,105 @@
+{
+  "theme": "LIGHT",
+  "archetype": "1 (Organic & Earthy)",
+  "emotional_tone": "Reassuring, clear, grounded, transparent, wellness-focused",
+  "colors": {
+    "background": "#F9F9F8",
+    "surface": "#FFFFFF",
+    "surface_hover": "#F3F4F6",
+    "primary": "#1C3B35",
+    "primary_hover": "#162F2A",
+    "secondary": "#E3EBE6",
+    "secondary_foreground": "#1C3B35",
+    "text_main": "#111827",
+    "text_muted": "#4B5563",
+    "success_bg": "#E8F0EB",
+    "success_text": "#1F4D36",
+    "warning_bg": "#FEF3C7",
+    "warning_text": "#92400E",
+    "danger_bg": "#FEE2E2",
+    "danger_text": "#991B1B",
+    "border": "#E5E7EB",
+    "border_focus": "#1C3B35"
+  },
+  "typography": {
+    "heading_font": "Manrope",
+    "body_font": "Work Sans",
+    "h1": "text-4xl sm:text-5xl font-extrabold tracking-tight text-[#1C3B35]",
+    "h2": "text-2xl sm:text-3xl font-bold tracking-tight text-[#1C3B35]",
+    "h3": "text-xl sm:text-2xl font-semibold tracking-tight text-[#111827]",
+    "h4": "text-lg font-medium text-[#111827]",
+    "body": "text-base font-normal text-[#111827] leading-relaxed",
+    "small": "text-sm text-[#4B5563]",
+    "overline": "text-xs font-bold uppercase tracking-[0.2em] text-[#4B5563]"
+  },
+  "spacing": {
+    "container_padding": "p-6 md:p-8",
+    "grid_gap": "gap-6",
+    "section_gap": "gap-12"
+  },
+  "surfaces": {
+    "card_default": "bg-white border border-[#E5E7EB] rounded-2xl shadow-none transition-all duration-200",
+    "card_hover": "hover:shadow-md hover:border-[#D1D5DB] hover:-translate-y-0.5",
+    "card_active": "ring-2 ring-[#1C3B35] bg-[#F9F9F8]",
+    "glass_header": "backdrop-blur-xl bg-white/80 border-b border-[#E5E7EB] z-50 sticky top-0"
+  },
+  "components": {
+    "button_primary": "bg-[#1C3B35] text-white rounded-xl px-6 py-3 font-semibold hover:bg-[#162F2A] transition-colors focus:ring-2 focus:ring-[#E3EBE6] focus:ring-offset-2",
+    "button_secondary": "bg-[#E3EBE6] text-[#1C3B35] rounded-xl px-6 py-3 font-semibold hover:bg-[#D1E0D7] transition-colors focus:ring-2 focus:ring-[#1C3B35] focus:ring-offset-2",
+    "button_outline": "bg-transparent border border-[#E5E7EB] text-[#111827] rounded-xl px-6 py-3 font-semibold hover:bg-[#F3F4F6] transition-colors",
+    "badge_active": "bg-[#E8F0EB] text-[#1F4D36] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
+    "badge_pending": "bg-[#FEF3C7] text-[#92400E] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
+    "badge_declined": "bg-[#FEE2E2] text-[#991B1B] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
+    "progress_bar_bg": "bg-[#E5E7EB] rounded-full h-3 overflow-hidden",
+    "progress_bar_fill": "bg-[#1C3B35] h-full rounded-full"
+  },
+  "icons_library": "@phosphor-icons/react",
+  "media": {
+    "image_urls": [
+      {
+        "category": "employee_avatar_female",
+        "url": "https://images.pexels.com/photos/29852895/pexels-photo-29852895.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150&w=150",
+        "description": "Avatar for employee (female)"
+      },
+      {
+        "category": "employee_avatar_male",
+        "url": "https://images.pexels.com/photos/18165006/pexels-photo-18165006.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150&w=150",
+        "description": "Avatar for employee (male)"
+      },
+      {
+        "category": "abstract_background_texture",
+        "url": "https://images.pexels.com/photos/14773526/pexels-photo-14773526.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Soft sage green leaf texture for a subtle background banner or profile hero section"
+      }
+    ]
+  },
+  "layout_instructions": {
+    "dashboard_grid": "Use 'Control Room' dense grid approach, but with soft rounded cards. grid-cols-1 md:grid-cols-4. Sidebar takes 1 col, main content takes 3 cols.",
+    "sidebar": "Contains the Employee Profile Card, Add-On Benefits, and 1095-C Download Card.",
+    "main_content": "Contains Enrollment Status Badge, Cost Summary Card, Enrolled Plan Detail Card, Premium Breakdown Table.",
+    "open_enrollment_view": "4-col grid. Sidebar (1 col) has profile and dynamic cost summary based on selected tier. Main (3 col) shows plan comparison cards side-by-side using a bento layout."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Ensure #1C3B35 text meets WCAG AA on #E3EBE6 and #F9F9F8 backgrounds.",
+    "test_ids": "MUST include data-testid on all buttons, plan cards, dialog triggers, and key informational elements (like balances or plan names) using kebab-case role-based naming (e.g., 'enroll-plan-button', 'decline-coverage-trigger').",
+    "motion": "Use transition-all duration-200 for hovers. Respect prefers-reduced-motion."
+  },
+  "specific_feature_guidelines": {
+    "profile_card": "Minimalist bento approach. Use the avatar overlapping a subtle sage cover image (abstract_background_texture). Deep green text.",
+    "cost_summary": "Use large typography for the monthly premium (e.g., text-4xl). Include a horizontal progress bar or segmented bar showing employer vs employee split. Legend below the bar.",
+    "plan_detail_card": "Grid within a grid (bento). Top row: Carrier Logo (use a clean font or phosphor icon as placeholder, DO NOT use external placeholder images), Plan Name. Bottom row: 3-4 bento boxes for Deductible, OOP Max, Copay. Use soft grey backgrounds for the inner bento boxes to distinguish them from the white card.",
+    "premium_table": "No zebra striping. Generous padding in cells (p-4). Subdued text for table headers (overline style). Current enrolled tier highlighted with #E3EBE6 background.",
+    "decline_coverage_dialog": "Clean Shadcn Dialog. Title: Decline Coverage. Content: Select reason from Shadcn Select component. Action: Danger button ('Decline Coverage' in #991B1B bg).",
+    "open_enrollment_cards": "Interactive cards. When unselected, border is #E5E7EB. When selected, border becomes 2px #1C3B35 and a small Phosphor CheckCircle icon appears in the top right."
+  },
+  "instructions_to_main_agent": [
+    "1. Initialize React project, install Tailwind and Shadcn.",
+    "2. Add fonts Manrope and Work Sans via Google Fonts in index.css.",
+    "3. Install @phosphor-icons/react for icons.",
+    "4. Build the Enrolled View (3-col layout: sidebar + main).",
+    "5. Build the Open Enrollment View (Plan Selection) with interactive state.",
+    "6. Build the Decline Coverage dialog.",
+    "7. Ensure all interactive components have data-testid attributes.",
+    "8. Use the color palette and spacing rules exactly as defined."
+  ]
+}

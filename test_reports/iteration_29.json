@@ -1,0 +1,104 @@
+{
+  "summary": "Tested per-employee affordability breakdown in compliance check popup. All 11 backend tests pass. Frontend UI correctly displays: summary cards (Employee Cost, ACA Threshold, Pass Rate), green/red legend (Affordable/Unaffordable counts), Employee Breakdown table with columns (Employee, Salary, Max Affordable, Plan Cost, % of Income, Status), filter tabs (All, Can Afford, Cannot), and 'Show all X employees' toggle. Silver PPO shows 100% pass rate (47/47 affordable at $100/mo). Platinum PPO shows 42.6% pass rate (20 affordable, 27 unaffordable at $744/mo). Employees correctly sorted: unaffordable first, then by pct_of_income descending. At-risk employees logic correctly returns 0 when employer has compliant MEC+MV plans available.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: POST /api/enrollment/plans/{plan_id}/compliance-check returns affordability.employees array",
+    "Backend: Each employee entry has required fields (employee_id, name, annual_salary, monthly_threshold, employee_monthly_cost, pct_of_income, affordable)",
+    "Backend: Silver PPO ($100/mo) returns 100% pass rate - all 47 employees affordable",
+    "Backend: Platinum PPO ($744/mo) returns 42.6% pass rate - 20 affordable, 27 unaffordable",
+    "Backend: Employees sorted correctly - unaffordable first, then by pct_of_income descending",
+    "Backend: pct_of_income calculation correct (annual_ee_cost / annual_salary * 100)",
+    "Backend: monthly_threshold calculation correct (annual_salary * 0.0996 / 12)",
+    "Backend: affordable flag matches threshold comparison (ee_cost <= monthly_threshold)",
+    "Backend: At-risk employees returns 0 when employer has compliant MEC+MV plans",
+    "Frontend: Affordability section shows summary cards (Employee Cost, ACA Threshold, Pass Rate)",
+    "Frontend: Green/red legend shows affordable/unaffordable counts",
+    "Frontend: Employee Breakdown table with correct columns (Employee, Salary, Max Affordable, Plan Cost, % of Income, Status)",
+    "Frontend: Filter tabs (All, Can Afford, Cannot) work correctly",
+    "Frontend: 'Show all X employees' toggle expands/collapses the full list",
+    "Frontend: Silver PPO shows Pass badge with 100% pass rate",
+    "Frontend: Platinum PPO shows Fail badge with 42.6% pass rate",
+    "Frontend: Unaffordable employees shown with red X status icon",
+    "Frontend: Affordable employees shown with green checkmark status icon"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_affordability_breakdown.py",
+    "/app/test_reports/pytest/affordability_breakdown_results.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend affordability calculation in enrollment_workflow.py lines 504-531 correctly implements W-2 Safe Harbor method",
+    "Employee sorting logic (line 531) correctly sorts unaffordable first, then by pct_of_income descending",
+    "Frontend AffordabilityEmployeeList component (lines 974-1049) correctly implements filter tabs and expandable table",
+    "At-risk employee logic in server.py lines 1694-1698 correctly checks for compliant plans before marking employees at-risk"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_affordability_breakdown.py"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passed)",
+    "frontend": "100% (all affordability breakdown UI features working correctly)"
+  },
+  "test_credentials": {
+    "employer": {
+      "email": "fajju2001@gmail.com",
+      "password": "test123",
+      "employer_id": "351025eb-da00-4267-8b09-e7b061b55101"
+    }
+  },
+  "seed_data_creation": "No new seed data created. Used existing plans: Silver PPO (ac820c3c-4409-4818-82c5-55c8ba523ce9, $100/mo EE cost), Platinum PPO (16739425-5a63-45d9-9fde-418724747016, $744/mo EE cost)",
+  "mocked_apis": {
+    "has_mocked_apis": false,
+    "mocked_apis_list": []
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Per-employee affordability breakdown feature fully tested and working. Key test data: Silver PPO ($100/mo EE cost) has 100% pass rate (47/47 affordable). Platinum PPO ($744/mo EE cost) has 42.6% pass rate (20 affordable, 27 unaffordable). The compliance check endpoint POST /api/enrollment/plans/{plan_id}/compliance-check returns affordability.employees array with: employee_id, name, annual_salary, monthly_threshold, employee_monthly_cost, pct_of_income, affordable. Employees are sorted: unaffordable first, then by pct_of_income descending. Frontend AffordabilityEmployeeList component displays filter tabs (All, Can Afford, Cannot) and expandable table with 'Show all X employees' toggle. At-risk employees logic correctly returns 0 when employer has compliant MEC+MV plans available.",
+  "verified_feature_details": {
+    "feature_description": "Per-employee affordability breakdown in compliance check popup",
+    "backend_changes": {
+      "file": "backend/routes/enrollment_workflow.py",
+      "lines": "504-531",
+      "description": "Added employee_affordability array with per-employee data (name, annual_salary, monthly_threshold, employee_monthly_cost, pct_of_income, affordable). Sorted unaffordable first, then by pct_of_income descending."
+    },
+    "frontend_changes": {
+      "file": "frontend/src/pages/PlanLibraryPage.js",
+      "lines": "974-1049",
+      "description": "Added AffordabilityEmployeeList component with filter tabs (All, Can Afford, Cannot), expandable table, and summary cards"
+    },
+    "at_risk_fix": {
+      "file": "backend/server.py",
+      "lines": "1694-1698",
+      "description": "Fixed at-risk employee logic to check MEC+MV plan availability instead of enrollment status"
+    },
+    "test_results": {
+      "silver_ppo": {
+        "employee_cost": "$100/mo",
+        "pass_rate": "100%",
+        "affordable": 47,
+        "unaffordable": 0
+      },
+      "platinum_ppo": {
+        "employee_cost": "$744/mo",
+        "pass_rate": "42.6%",
+        "affordable": 20,
+        "unaffordable": 27
+      }
+    },
+    "ui_elements_verified": [
+      "Summary cards (Employee Cost, ACA Threshold, Pass Rate)",
+      "Green/red legend (Affordable/Unaffordable counts)",
+      "Employee Breakdown table (Employee, Salary, Max Affordable, Plan Cost, % of Income, Status)",
+      "Filter tabs (All, Can Afford, Cannot)",
+      "'Show all X employees' toggle"
+    ]
+  }
+}
